@@ -5,7 +5,7 @@ Accordding to the internet:
 
 Simply put, BASIC is well... a basic programming language! 
 
-#Installation
+# Installation
 
 Simply clone this repository:
 
