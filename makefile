@@ -1,6 +1,6 @@
-all: hw4
+all: basic
 
-hw4: main.cpp arithmetic.o boolean.o command.o interpreter.o compiler.o
+basic: main.cpp arithmetic.o boolean.o command.o interpreter.o compiler.o
 	g++ -g -Wall main.cpp arithmetic.o boolean.o command.o interpreter.o compiler.o -o main
 
 arithmetic.o: arithmetic.h arithmetic.cpp

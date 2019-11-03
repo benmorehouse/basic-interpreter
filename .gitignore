@@ -3,4 +3,10 @@ main.dSYM/
 .flow.yml
 main
 input1.txt
-
+arithmetic.o
+boolean.o
+command.o
+compiler.o
+interpreter.o
+interpreter.txt
+compilerOutput.txt
