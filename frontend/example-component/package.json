@@ -1,8 +1,8 @@
 {
-  "name": "basic-interpreter",
+  "name": "example-component",
   "private": true,
   "version": "0.0.1",
-  "description": "basic-interpreter",
+  "description": "example-component",
   "license": "MIT",
   "files": [
     "dist/"
@@ -15,8 +15,7 @@
     "generate": "stencil generate"
   },
   "dependencies": {
-    "@ionic/core": "^4.11.7",
-    "xterm": "^4.3.0"
+    "@ionic/core": "^4.11.7"
   },
   "devDependencies": {
     "@stencil/core": "^1.8.4"

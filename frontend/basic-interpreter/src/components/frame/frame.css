@@ -1,11 +1,26 @@
-/*--------------- Top bar style ---------------------*/
-
-.top-bar{
-	background-color:#01E7AF;
-	margin-left:auto;
-	margin-right:auto;
-	width:900px;
+:host {
+	display: block;
 }
 
+.top-bar{
+	width:auto;
+	height:50px;
+	margin-left:-10px;
+	margin-right:-10px;
+	background-color:#01E7AF;
+}
 
-/*--------------- Top bar style ---------------------*/
+.button-container{
+	width:500px;
+	height:40px;
+	margin-left:auto;
+	margin-right:auto;
+	position:relative;
+	top:5px;
+	background-color:#03CA99;
+}
+
+ion-button{
+	padding-top:10px;
+	height:20px;
+}
