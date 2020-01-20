@@ -28,7 +28,7 @@ func (p *AboutPage) GetURL() string{
 	return p.Url
 }
 
-func (p *AboutPage) GetData() *interface{}{
+func (p *AboutPage) GetData() *interface{
 	return &p.Data
 }
 /************* About Page *****************/
@@ -41,7 +41,11 @@ type LoginPage struct{
 }
 
 func LoadLoginPage() *LoginPage{
-	
+	return p := LoginPage{
+		Title: "Login Page for the Basic interpreter",
+		Url: "/login",
+	}
+
 }
 
 func (p *LoginPage) GetTitle() string{
@@ -52,8 +56,8 @@ func (p *LoginPage) GetURL() string{
 	return p.Url
 }
 
-func (p *LoginPage) GetData() string{
-	return p.Data
+func (p *LoginPage) GetData()  *interface{
+	return &p.Data
 }
 /************* Login Page *****************/
 
@@ -61,7 +65,15 @@ func (p *LoginPage) GetData() string{
 type GithubPage struct{
 	Title       string
 	Url         string
-	Data        string
+	Data        interface{}
+}
+
+func LoadGithubPage() *GithubPage{
+	return p := LoginPage{
+		Title: "Github Page",
+		Url: "/github",
+	}
+
 }
 
 func (p *GithubPage) GetTitle() string{
@@ -72,8 +84,8 @@ func (p *GithubPage) GetURL() string{
 	return p.Url
 }
 
-func (p *GithubPage) GetData() string{
-	return p.Data
+func (p *GithubPage) GetData() *interface{
+	return &p.Data
 }
 /************* Github Page *****************/
 
@@ -81,7 +93,14 @@ func (p *GithubPage) GetData() string{
 type TerminalPage struct{
 	Title       string
 	Url         string
-	Data        string
+	Data        interface{}
+}
+
+func LoadTerminalPage() *TerminalPage{
+	return p := LoginPage{
+		Title: "Terminal for the basic interpreter",
+		Url: "/terminal",
+	}
 }
 
 func (p *TerminalPage) GetTitle() string{
@@ -92,8 +111,8 @@ func (p *TerminalPage) GetURL() string{
 	return p.Url
 }
 
-func (p *TerminalPage) GetData() string{
-	return p.Data
+func (p *TerminalPage) GetData() *interface{
+	return &p.Data
 }
 /************* Terminal Page *****************/
 

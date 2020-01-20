@@ -1,0 +1,12 @@
+{
+	"Port":2272,
+	"LogFileName": "basicInterpreterLogs.log",
+
+	"DBName":"BasicDB",
+	"DBUser":"root",
+	"DBPass":"Moeller12!",
+	"UserTable":"BasicUsers",
+
+	"BasicOutFile":"basicOut.json",
+	"BasicInFile":"basicIn.json"
+}

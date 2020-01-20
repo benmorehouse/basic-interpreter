@@ -7,19 +7,16 @@ import(
 
 var log = NewLogger()
 
-// should make an init function
-
-type Page struct{
-	Title         string
-	User          *Session
-}
-
 type Session struct{
 	LoggedIn    bool
 	Username    string
 }
 
 func main(){
+
+
+/*
+
 	log.Error("Basic Interpreter has started...")
 	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
@@ -54,4 +51,5 @@ func main(){
 	}
 
 	log.Info("Basic Interpreter Is Waiting...")
+*/
 }
