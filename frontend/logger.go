@@ -5,13 +5,15 @@ import(
 	"os"
 )
 
-func NewLogger() *logrus.Logger{ // returns a logger for good debugging
+func NewLogger(fileName string) (*logrus.Logger, error){ // returns a logger for good debugging
 	f, err := os.OpenFile("basicInterpreterLogs.log", os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil{
-		panic(err)
+		return nil, err
 	}
-	log := logrus.New()
-	log.Out = f
-	return log
+	log := logrus.Logger{
+		Out: f,
+	}
+
+	return &log, nil
 }
 

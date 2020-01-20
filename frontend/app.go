@@ -3,12 +3,12 @@ package main
 import(
 	log "github.com/sirupsen/logrus"
 	"os"
-	"errors"
 	"encoding/json"
+	"io/ioutil"
 )
 
 type App struct{
-	Pages	   []*Pages
+	Pages	   []Page
 	Log        *log.Logger
 	User       *Session
 	ConfigFile interface{}
@@ -27,7 +27,7 @@ func NewApp() (*App, error){
 	}
 
 	config := struct{
-		Port            string `json:"Port"`
+		Port            int    `json:"Port"`
 		LogFileName     string `json:"LogFileName"`
 		DBName		string `json:"BasicDB"`
 		DBUser		string `json:"DBUser"`
@@ -46,34 +46,30 @@ func NewApp() (*App, error){
 		return nil, err
 	}
 
-	fmt.Println(config)
+	session := Session{
+		LoggedIn: false,
+		Username: "",
+	}
 
-	f, err := os.OpenFile("basicInterpreterLogs.log", os.O_RDWR|os.O_CREATE, 0755)
+	pages := []Page{
+		LoadAboutPage(),
+		LoadLoginPage(),
+		LoadGithubPage(),
+		LoadTerminalPage(),
+	}
+
+	logger, err := NewLogger(config.LogFileName)
 	if err != nil{
-		return nil, errors.New("Couldnt create log file:",err)
+		return nil, err
 	}
-/*
-	app := App{
-		Log: log.Logger{
-			Out: f,
-		},
-		User:
-		Pages:
-		ConfigFile:
-	}
-*/
-	return nil, nil
 
+	a := App{
+		Pages: pages,
+		Log: logger,
+		User: &session,
+		ConfigFile: confData,
+	}
+
+	return &a, nil
 }
-
-func NewLogger() *logrus.Logger{ // returns a logger for good debugging
-	f, err := os.OpenFile("basicInterpreterLogs.log", os.O_RDWR|os.O_CREATE, 0755)
-	if err != nil{
-		panic(err)
-	}
-	log := logrus.New()
-	log.Out = f
-	return log
-}
-
 

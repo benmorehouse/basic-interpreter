@@ -1,19 +1,12 @@
 package main
 
 import(
-	"html/template"
-	"net/http"
+	"fmt"
 )
 
-var log = NewLogger()
-
-type Session struct{
-	LoggedIn    bool
-	Username    string
-}
-
 func main(){
-
+	_, err := NewApp()
+	fmt.Println(err)
 
 /*
 
