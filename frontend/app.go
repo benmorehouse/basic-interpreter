@@ -5,13 +5,25 @@ import(
 	"os"
 	"encoding/json"
 	"io/ioutil"
+	"net/http"
+	"html/template"
 )
 
 type App struct{
 	Pages	   []Page
-	Log        *log.Logger
 	User       *Session
-	ConfigFile interface{}
+	ConfigFile *appConf
+}
+
+type appConf struct{
+	Port            int    `json:"Port"`
+	LogFileName     string `json:"LogFileName"`
+	DBName		string `json:"BasicDB"`
+	DBUser		string `json:"DBUser"`
+	DBPass		string `json:"DBPass"`
+	UserTable	string `json:"UserTable"`
+	BasicOutFile	string `json:"BasicOutFile"`
+	BasicInFile	string `json:"BasicInFile"`
 }
 
 type Session struct{
@@ -26,16 +38,7 @@ func NewApp() (*App, error){
 		return nil, err
 	}
 
-	config := struct{
-		Port            int    `json:"Port"`
-		LogFileName     string `json:"LogFileName"`
-		DBName		string `json:"BasicDB"`
-		DBUser		string `json:"DBUser"`
-		DBPass		string `json:"DBPass"`
-		UserTable	string `json:"UserTable"`
-		BasicOutFile	string `json:"BasicOutFile"`
-		BasicInFile	string `json:"BasicInFile"`
-	}{}
+	config := appConf{}
 
 	confData, err := ioutil.ReadAll(jsonFile)
 	if err != nil{
@@ -58,18 +61,55 @@ func NewApp() (*App, error){
 		LoadTerminalPage(),
 	}
 
-	logger, err := NewLogger(config.LogFileName)
 	if err != nil{
 		return nil, err
 	}
 
 	a := App{
 		Pages: pages,
-		Log: logger,
 		User: &session,
-		ConfigFile: confData,
+		ConfigFile: &config,
 	}
-
 	return &a, nil
+}
+
+func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
+	log.Info("About Page requested")
+	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	err := basicTemplate.Execute(w, nil)
+	if err != nil{
+		log.Error(err)
+	}
+}
+
+func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
+	log.Info("Login Page requested")
+	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	err := basicTemplate.Execute(w, nil)
+	if err != nil{
+		log.Error(err)
+	}
+}
+
+func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
+	log.Info("Attempted Login... handling now")
+}
+
+func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
+	log.Info("Github Page requested")
+	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	err := basicTemplate.Execute(w, nil)
+	if err != nil{
+		log.Error(err)
+	}
+}
+
+func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
+	log.Info("Terminal Page requested")
+	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	err := basicTemplate.Execute(w, nil)
+	if err != nil{
+		log.Error(err)
+	}
 }
 
