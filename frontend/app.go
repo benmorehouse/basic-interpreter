@@ -38,6 +38,9 @@ type appConf struct{
 	LoginPageFile		string `json:"LoginPageFile"`
 	TerminalPageFile	string `json:"TerminalPageFile"`
 	GithubPageFile		string `json:"GithubPageFile"`
+
+	TerminalInputFile	string `json:"TerminalInputFile"`
+	TerminalOutputFile	string `json:"TerminalOutputFile"`
 }
 
 type Session struct{
