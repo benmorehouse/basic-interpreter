@@ -7,17 +7,17 @@
 	"UserTable":			"BasicUsers",
 
 	"BasicOutFile":			"basicOut.json",
-	"BasicInFile":			"basicIn.json"
+	"BasicInFile":			"basicIn.json",
 
 	"AboutPageURL":			"/about",
 	"LoginPageURL":			"/login",
 	"LoginAttemptedPageURL":	"/loginAttempted",
 	"TerminalPageURL":		"/terminal",
-	"GithubPageURL":		"/github"
+	"GithubPageURL":		"/github",
 
-	"AboutPageFile":		"about.gohtml",
-	"LoginPageFile":		"login.gohtml",
-	"TerminalPageURL":		"terminal.gohtml",
-	"GithubPageURL":		"github.gohtml"
+	"AboutPageFile":		"pages/about.gohtml",
+	"LoginPageFile":		"pages/login.gohtml",
+	"TerminalPageURL":		"pages/terminal.gohtml",
+	"GithubPageURL":		"pages/github.gohtml"
 
 }

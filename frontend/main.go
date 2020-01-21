@@ -3,14 +3,21 @@ package main
 import(
 	"net/http"
 	"strconv"
+	"os"
 	log "github.com/sirupsen/logrus"
 )
 
 func main(){
 	log.Info("Basic Interpreter Server started")
 	a, err := NewApp()
-	log.Info("App successfully intialized")
 
+	if err != nil{
+		log.Error(err)
+		log.Error("Ending Server lifespan...")
+		os.Exit(1)
+	}
+
+	log.Info("App successfully intialized")
 	http.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
 	http.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
 	http.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)

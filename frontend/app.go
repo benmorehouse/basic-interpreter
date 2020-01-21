@@ -81,7 +81,6 @@ func NewApp() (*App, error){
 		a.LoadTerminalPage(),
 	}
 	a.Pages = pages
-
 	return &a, nil
 }
 
@@ -98,7 +97,7 @@ func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 	log.Info("Login Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
 	err := basicTemplate.Execute(w, nil)
-	if err != nil
+	if err != nil{
 		log.Error(err)
 	}
 }
