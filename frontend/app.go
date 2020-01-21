@@ -10,20 +10,31 @@ import(
 )
 
 type App struct{
-	Pages	   []Page
+	Pages	   []Page // we might not need this
 	User       *Session
 	ConfigFile *appConf
 }
 
 type appConf struct{
-	Port            int    `json:"Port"`
-	LogFileName     string `json:"LogFileName"`
-	DBName		string `json:"BasicDB"`
-	DBUser		string `json:"DBUser"`
-	DBPass		string `json:"DBPass"`
-	UserTable	string `json:"UserTable"`
-	BasicOutFile	string `json:"BasicOutFile"`
-	BasicInFile	string `json:"BasicInFile"`
+	Port			int    `json:"Port"`
+	DBName			string `json:"BasicDB"`
+	DBUser			string `json:"DBUser"`
+	DBPass			string `json:"DBPass"`
+	UserTable		string `json:"UserTable"`
+	BasicOutFile		string `json:"BasicOutFile"`
+	BasicInFile		string `json:"BasicInFile"`
+
+	AboutPageURL		string `json:"AboutPageURL"`
+	LoginPageURL		string `json:"LoginPageURL"`
+	LoginAttemptedPageURL	string `json:"LoginAttemptedPageURL"`
+	TerminalPageURL		string `json:"TerminalPageURL"`
+	GithubPageURL		string `json:"GithubPageURL"`
+
+	AboutPageFile		string `json:"AboutPageFile"`
+	LoginPageFile		string `json:"LoginPageFile"`
+	LoginAttemptedPageFile	string `json:"LoginAttemptedPageFile"`
+	TerminalPageFile	string `json:"TerminalPageFile"`
+	GithubPageFile		string `json:"GithubPageFile"`
 }
 
 type Session struct{
@@ -54,29 +65,30 @@ func NewApp() (*App, error){
 		Username: "",
 	}
 
-	pages := []Page{
-		LoadAboutPage(),
-		LoadLoginPage(),
-		LoadGithubPage(),
-		LoadTerminalPage(),
-	}
-
 	if err != nil{
 		return nil, err
 	}
 
 	a := App{
-		Pages: pages,
 		User: &session,
 		ConfigFile: &config,
 	}
+
+	pages := []Page{
+		a.LoadAboutPage(),
+		a.LoadLoginPage(),
+		a.LoadGithubPage(),
+		a.LoadTerminalPage(),
+	}
+	a.Pages = pages
+
 	return &a, nil
 }
 
 func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 	log.Info("About Page requested")
 	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
-	err := basicTemplate.Execute(w, nil)
+	err := basicTemplate.Execute(w, a)
 	if err != nil{
 		log.Error(err)
 	}
@@ -84,7 +96,7 @@ func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 	log.Info("Login Page requested")
-	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	basicTemplate := template.Must(template.ParseFiles("Login.gohtml"))
 	err := basicTemplate.Execute(w, nil)
 	if err != nil{
 		log.Error(err)
@@ -97,7 +109,7 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
 	log.Info("Github Page requested")
-	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	basicTemplate := template.Must(template.ParseFiles("github.gohtml"))
 	err := basicTemplate.Execute(w, nil)
 	if err != nil{
 		log.Error(err)
@@ -106,10 +118,9 @@ func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 	log.Info("Terminal Page requested")
-	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
+	basicTemplate := template.Must(template.ParseFiles("index.gohtml"))
 	err := basicTemplate.Execute(w, nil)
 	if err != nil{
 		log.Error(err)
 	}
 }
-

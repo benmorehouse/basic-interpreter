@@ -1,11 +1,23 @@
 {
 	"Port":2272,
 
-	"DBName":"BasicDB",
-	"DBUser":"root",
-	"DBPass":"Moeller12!",
-	"UserTable":"BasicUsers",
+	"DBName":			"BasicDB",
+	"DBUser":			"root",
+	"DBPass":			"Moeller12!",
+	"UserTable":			"BasicUsers",
 
-	"BasicOutFile":"basicOut.json",
-	"BasicInFile":"basicIn.json"
+	"BasicOutFile":			"basicOut.json",
+	"BasicInFile":			"basicIn.json"
+
+	"AboutPageURL":			"/about",
+	"LoginPageURL":			"/login",
+	"LoginAttemptedPageURL":	"/loginAttempted",
+	"TerminalPageURL":		"/terminal",
+	"GithubPageURL":		"/github"
+
+	"AboutPageFile":		"about.gohtml",
+	"LoginPageFile":		"login.gohtml",
+	"TerminalPageURL":		"terminal.gohtml",
+	"GithubPageURL":		"github.gohtml"
+
 }

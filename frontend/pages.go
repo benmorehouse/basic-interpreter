@@ -13,10 +13,10 @@ type AboutPage struct{
 	Data        interface{}
 }
 
-func LoadAboutPage() *AboutPage{
+func (a *App) LoadAboutPage() *AboutPage{
 	p := AboutPage{
 		Title: "Basic The Programming Language",
-		Url: "/about",
+		Url: a.ConfigFile.AboutPageURL,
 	}
 	return &p
 }
@@ -41,10 +41,10 @@ type LoginPage struct{
 	Data        interface{}
 }
 
-func LoadLoginPage() *LoginPage{
+func (a *App) LoadLoginPage() *LoginPage{
 	p := LoginPage{
 		Title: "Login Page for the Basic interpreter",
-		Url: "/login",
+		Url: a.ConfigFile.LoginPageURL,
 	}
 	return &p
 
@@ -70,10 +70,10 @@ type GithubPage struct{
 	Data        interface{}
 }
 
-func LoadGithubPage() *GithubPage{
+func (a *App) LoadGithubPage() *GithubPage{
 	p := GithubPage{
 		Title: "Github Page",
-		Url: "/github",
+		Url: a.ConfigFile.GithubPageURL,
 	}
 	return &p
 }
@@ -98,10 +98,10 @@ type TerminalPage struct{
 	Data        interface{}
 }
 
-func LoadTerminalPage() *TerminalPage{
+func (a *App) LoadTerminalPage() *TerminalPage{
 	p := TerminalPage{
 		Title: "Terminal for the basic interpreter",
-		Url: "/terminal",
+		Url: a.ConfigFile.TerminalPageURL,
 	}
 	return &p
 }

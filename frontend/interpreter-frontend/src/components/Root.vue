@@ -72,35 +72,3 @@ export default {
 
 </script>
 
-<style scoped>
-@import url("https://fonts.googleapis.com/css?family=Material+Icons");
-
-#github-logo{
-	width:20px;
-}
-
-.md-app-content{
-	background-color:#f5f5f5;
-	padding-top:30px;
-	padding-left:50px;
-	padding-right:50px;
-}
-
-.md-list-action{
-	width:100px;
-	height:40px;
-	border-radius:10px;
-	background-color:#f5f5f5;
-}
-
-.md-drawer{
-	width: 200px;
-}
-
-.md-app {
-	min-height: 600px;
-	border: 1px solid rgba(#000, .12);
-}
-
-</style>
-
