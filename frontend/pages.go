@@ -16,7 +16,7 @@ type AboutPage struct{
 func (a *App) LoadAboutPage() *AboutPage{
 	p := AboutPage{
 		Title: "Basic The Programming Language",
-		Url: a.ConfigFile.AboutPageURL,
+		Url: a.Config.AboutPageURL,
 	}
 	return &p
 }
@@ -44,7 +44,7 @@ type LoginPage struct{
 func (a *App) LoadLoginPage() *LoginPage{
 	p := LoginPage{
 		Title: "Login Page for the Basic interpreter",
-		Url: a.ConfigFile.LoginPageURL,
+		Url: a.Config.LoginPageURL,
 	}
 	return &p
 
@@ -73,7 +73,7 @@ type GithubPage struct{
 func (a *App) LoadGithubPage() *GithubPage{
 	p := GithubPage{
 		Title: "Github Page",
-		Url: a.ConfigFile.GithubPageURL,
+		Url: a.Config.GithubPageURL,
 	}
 	return &p
 }
@@ -101,7 +101,7 @@ type TerminalPage struct{
 func (a *App) LoadTerminalPage() *TerminalPage{
 	p := TerminalPage{
 		Title: "Terminal for the basic interpreter",
-		Url: a.ConfigFile.TerminalPageURL,
+		Url: a.Config.TerminalPageURL,
 	}
 	return &p
 }

@@ -11,12 +11,12 @@ func main(){
 	a, err := NewApp()
 	log.Info("App successfully intialized")
 
-	http.HandleFunc(a.ConfigFile.AboutPageURL, a.HandleAbout)
-	http.HandleFunc(a.ConfigFile.TerminalPageURL, a.HandleTerminal)
-	http.HandleFunc(a.ConfigFile.LoginPageURL, a.HandleLogin)
-	http.HandleFunc(a.ConfigFile.GithubPageURL, a.HandleGithub)
+	http.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
+	http.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
+	http.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)
+	http.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
 
-	port := ":" + strconv.Itoa(a.ConfigFile.Port)
+	port := ":" + strconv.Itoa(a.Config.Port)
 	log.Info("Basic Interpreter Is Waiting...")
 	log.Info("LOCAL: http://localhost" + port)
 	err = http.ListenAndServe(port, nil)

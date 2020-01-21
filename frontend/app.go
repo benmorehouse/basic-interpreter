@@ -12,11 +12,12 @@ import(
 type App struct{
 	Pages	   []Page // we might not need this
 	User       *Session
-	ConfigFile *appConf
+	Config	   *appConf
 }
 
 type appConf struct{
 	Port			int    `json:"Port"`
+
 	DBName			string `json:"BasicDB"`
 	DBUser			string `json:"DBUser"`
 	DBPass			string `json:"DBPass"`
@@ -32,7 +33,6 @@ type appConf struct{
 
 	AboutPageFile		string `json:"AboutPageFile"`
 	LoginPageFile		string `json:"LoginPageFile"`
-	LoginAttemptedPageFile	string `json:"LoginAttemptedPageFile"`
 	TerminalPageFile	string `json:"TerminalPageFile"`
 	GithubPageFile		string `json:"GithubPageFile"`
 }
@@ -71,7 +71,7 @@ func NewApp() (*App, error){
 
 	a := App{
 		User: &session,
-		ConfigFile: &config,
+		Config: &config,
 	}
 
 	pages := []Page{
@@ -87,8 +87,8 @@ func NewApp() (*App, error){
 
 func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 	log.Info("About Page requested")
-	basicTemplate := template.Must(template.ParseFiles("about.gohtml"))
-	err := basicTemplate.Execute(w, a)
+	basicTemplate := template.Must(template.ParseFiles(a.Config.AboutPageFile))
+	err := basicTemplate.Execute(w, a.User)
 	if err != nil{
 		log.Error(err)
 	}
@@ -96,9 +96,9 @@ func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 	log.Info("Login Page requested")
-	basicTemplate := template.Must(template.ParseFiles("Login.gohtml"))
+	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
 	err := basicTemplate.Execute(w, nil)
-	if err != nil{
+	if err != nil
 		log.Error(err)
 	}
 }
@@ -109,7 +109,7 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
 	log.Info("Github Page requested")
-	basicTemplate := template.Must(template.ParseFiles("github.gohtml"))
+	basicTemplate := template.Must(template.ParseFiles(a.Config.GithubPageFile))
 	err := basicTemplate.Execute(w, nil)
 	if err != nil{
 		log.Error(err)
@@ -118,7 +118,7 @@ func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 	log.Info("Terminal Page requested")
-	basicTemplate := template.Must(template.ParseFiles("index.gohtml"))
+	basicTemplate := template.Must(template.ParseFiles(a.Config.TerminalPageFile))
 	err := basicTemplate.Execute(w, nil)
 	if err != nil{
 		log.Error(err)
