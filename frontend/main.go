@@ -20,8 +20,13 @@ func main(){
 	log.Info("App successfully intialized")
 	http.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
 	http.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
-	http.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)
 	http.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
+
+	// login and sign up handlers
+	http.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)
+	http.HandleFunc(a.Config.CreateAccountURL, a.HandleCreateAccount)
+	http.HandleFunc(a.Config.LoginURL, a.HandleLoginAttempt)
+	// login and sign up handlers
 
 	port := ":" + strconv.Itoa(a.Config.Port)
 	log.Info("Basic Interpreter Is Waiting...")

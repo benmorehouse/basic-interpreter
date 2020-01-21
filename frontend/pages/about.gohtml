@@ -8,6 +8,12 @@
 <script src="https://kit.fontawesome.com/02e19dad27.js" crossorigin="anonymous">
 </script>
 <style>
+.nav-wrapper{
+	padding-top:-10px;
+	padding-left:10px;
+	padding-bottom:70px;
+}
+
 .container{
 	min-height:800px;
 }
@@ -24,14 +30,14 @@
 			<ul id="nav-mobile" class="right hide-on-small-and-down blue darken-4 ">
 				<li><a href="/terminal"><i class="material-icons">code</i></a></li>
 				<li><a href="/login"><i class="material-icons">fingerprint</i></a></li>
-				<li><a href="/Github"><i class="fab fa-github"></i></a></li>
+				<li><a href="/github"><i class="fab fa-github"></i></a></li>
 			</ul>
 		</div>
 	</nav>
 
 	<div id="body-container">
 		<div class="container low-text z-depth-2 center-align">
-			{{if .LoggedIn}}
+			{{if .User.LoggedIn}}
 				<h1>Welcome Back {{.User.Username}}</h1>
 			{{else}}
 				<h1>Welcome To Basic!</h1>

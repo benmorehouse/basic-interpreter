@@ -1,12 +1,13 @@
 package main
 
 import(
-	log "github.com/sirupsen/logrus"
 	"os"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"html/template"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type App struct{
@@ -30,6 +31,8 @@ type appConf struct{
 	LoginAttemptedPageURL	string `json:"LoginAttemptedPageURL"`
 	TerminalPageURL		string `json:"TerminalPageURL"`
 	GithubPageURL		string `json:"GithubPageURL"`
+	CreateAccountURL	string `json:"CreateAccountURL"`
+	LoginURL		string `json:"LoginAttemptedURL"`
 
 	AboutPageFile		string `json:"AboutPageFile"`
 	LoginPageFile		string `json:"LoginPageFile"`
@@ -87,7 +90,7 @@ func NewApp() (*App, error){
 func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 	log.Info("About Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.AboutPageFile))
-	err := basicTemplate.Execute(w, a.User)
+	err := basicTemplate.Execute(w, a)
 	if err != nil{
 		log.Error(err)
 	}
@@ -96,7 +99,7 @@ func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 	log.Info("Login Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
-	err := basicTemplate.Execute(w, nil)
+	err := basicTemplate.Execute(w, a)
 	if err != nil{
 		log.Error(err)
 	}
@@ -104,6 +107,12 @@ func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 	log.Info("Attempted Login... handling now")
+	r.ParseForm()
+}
+
+func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request){
+	log.Info("Attempted to create an account... handling now")
+	r.ParseForm()
 }
 
 func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
@@ -123,3 +132,6 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 		log.Error(err)
 	}
 }
+
+
+
