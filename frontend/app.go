@@ -17,12 +17,15 @@ type App struct{
 }
 
 type appConf struct{
-	Port			int    `json:"Port"`
+	Port			int    `json:"ServerPort"`
 
-	DBName			string `json:"BasicDB"`
+	DBHost			string `json:"DBHost"`
+	DBName			string `json:"DBName"`
 	DBUser			string `json:"DBUser"`
 	DBPass			string `json:"DBPass"`
+	DBPort			int    `json:"DBPort"`
 	UserTable		string `json:"UserTable"`
+
 	BasicOutFile		string `json:"BasicOutFile"`
 	BasicInFile		string `json:"BasicInFile"`
 
@@ -111,6 +114,14 @@ func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 	log.Info("Attempted Login... handling now")
 	r.ParseForm()
+
+	email    := r.Form["login-email"]
+	password := r.Form["login-password"]
+	if len(password) < 8 || email == ""{
+		// then handle this error
+	}
+	// at this point we need to pass it over to the database instance to validate the request
+
 }
 
 func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request){
@@ -134,7 +145,3 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 	if err != nil{
 		log.Error(err)
 	}
-}
-
-
-

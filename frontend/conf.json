@@ -1,9 +1,11 @@
 {
-	"Port":2272,
+	"ServerPort":2272,
 
-	"DBName":			"BasicDB",
-	"DBUser":			"root",
-	"DBPass":			"Moeller12!",
+	"DBHost":			"localhost",
+	"DBName":			"basicinterpreter",
+	"DBUser":			"benmorehouse",
+	"DBPass":			"",
+	"DBPort":			5432,	
 	"UserTable":			"BasicUsers",
 
 	"BasicOutFile":			"basicOut.json",
