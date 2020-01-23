@@ -119,7 +119,10 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 	password := r.Form["login-password"]
 	if len(password) < 8 || email == ""{
 		// then handle this error
+		log.Error("Unexpectedly found nil when parsing login information")
 	}
+
+
 	// at this point we need to pass it over to the database instance to validate the request
 
 }
@@ -145,3 +148,4 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 	if err != nil{
 		log.Error(err)
 	}
+}
