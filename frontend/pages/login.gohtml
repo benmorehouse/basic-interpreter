@@ -7,12 +7,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://kit.fontawesome.com/02e19dad27.js" crossorigin="anonymous"></script>
+<script src="scripts/login.js"></script>
 
 <style>
-form{
-	padding-right:10px;
-	padding-left:10px;
-}
+
 .nav-wrapper{
 	padding-top:-10px;
 	padding-left:10px;
@@ -110,34 +108,6 @@ form{
 	</div>
     </body>
 
-    <script>
-	    function login(){
-			username = document.getElementById('login-password').value;
-			password = document.getElementById('login-password').value;
-			console.log(username);
-			console.log(password);
-
-			var requestBody = JSON.stringify({
-			    Username: username,
-			    Password: password,
-			});
-			
-			var fetchURL = "/" + {{.Config.LoginURL}};
-			console.log("fetching the following:", fetchURL)
-   		        
-		    	fetch(fetchURL, {
-				method:"POST",
-				credentials:"include",
-				body: requestBody,		
-			}).then(res => {
-				return res.json();
-			}).then(data => {
-				console.log(data)
-			}).catch(err => {
-				console.log(err)
-			});
-	    }
-    </script>
 
   </html>
  
