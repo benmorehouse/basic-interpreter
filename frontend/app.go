@@ -13,10 +13,11 @@ import(
 type App struct{
 	Pages	   []Page // we might not need this
 	User       *Session
-	Config	   *appConf
+	Config	   *AppConf
+	connection *DBcxn
 }
 
-type appConf struct{
+type AppConf struct{
 	Port			int    `json:"ServerPort"`
 
 	DBHost			string `json:"DBHost"`
@@ -58,7 +59,7 @@ func NewApp() (*App, error){
 		return nil, err
 	}
 
-	config := appConf{}
+	config := AppConf{}
 
 	confData, err := ioutil.ReadAll(jsonFile)
 	if err != nil{
@@ -90,6 +91,11 @@ func NewApp() (*App, error){
 		a.LoadTerminalPage(),
 	}
 	a.Pages = pages
+	if err = a.EstablishDbcxn(); err != nil{
+		log.Error(err)
+		return nil, err
+	}
+
 	return &a, nil
 }
 
@@ -113,18 +119,48 @@ func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 
 func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 	log.Info("Attempted Login... handling now")
-	r.ParseForm()
+	loginResponse := func(success bool, statusMessage string){
+		response := struct{
+			Success bool		`json:"loginsucceeded"`
+			Messsage string		`json:"message"`
+		}{
+			success,
+			statusMessage,
+		}
 
-	email    := r.Form["login-email"]
-	password := r.Form["login-password"]
-	if len(password) < 8 || email == ""{
-		// then handle this error
-		log.Error("Unexpectedly found nil when parsing login information")
+		writeThisResponse, err := json.Marshal(response);
+		if err != nil{
+			log.Error("Unable to create response for login page:",err)
+		}
+
+		_, err = w.Write(writeThisResponse);
+		if err != nil{
+			log.Error("Unable to write response for login attempt page:",err)
+		}
 	}
 
+	requestBody := struct{
+		Email		string `json:"Email"`
+		Password	string `json:"Password"`
+	}{}
 
+	if r.Method != "POST"{
+		log.Error("request method not aligned correctly for login function. Request Method:",r.Method)
+		loginResponse(false,"request method not aligned correctly for login function. Current Request Method:" + r.Method)
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil{
+		log.Error("Couldn't decode request body. Error thrown:",err)
+		loginResponse(false, "Couldn't decode request body. Error thrown:" + err.Error())
+	}
 	// at this point we need to pass it over to the database instance to validate the request
+	if a.ValidateUserLogin(requestBody.Email, requestBody.Password) {
+		log.Info("User successfully authenticated. Rerouting to terminal page")
+		loginResponse(true, "")
+	}
 
+	log.Info("User information not found")
+	loginResponse(false, "")
 }
 
 func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request){
