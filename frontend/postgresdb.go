@@ -4,6 +4,7 @@ import(
 	"fmt"
 	"database/sql"
 	"errors"
+	"context"
 
 	"golang.org/x/crypto/bcrypt"
 	log "github.com/sirupsen/logrus"
@@ -18,6 +19,7 @@ type DBcxn struct{
 	Port		int
 	UserTable	string
 	cxn		*sql.Conn //unexported connection to database
+	context		*context.Context
 }
 
 func (a *App) EstablishDbcxn()(error){
@@ -37,10 +39,12 @@ func (a *App) EstablishDbcxn()(error){
 		return errors.New("DBName unexpectedly found nil")
 	}
 
+/* during testing we will leave this.
 	if conf.DBPass == ""{
-		log.Error("DBHost unexpectedly found nil")
-		return errors.New("DBHost unexpectedly found nil")
+		log.Error("DBPass unexpectedly found nil")
+		return errors.New("DBPass unexpectedly found nil")
 	}
+*/
 
 	if &conf.DBPort == nil{
 		log.Error("DBPort unexpectedly found nil")
@@ -65,9 +69,17 @@ func (a *App) EstablishDbcxn()(error){
 		conf.DBName,
 	)
 	db, err := sql.Open("postgres", psqlInfo)
-
 	if err != nil{
+		log.Error("Unable to establish connection with user database:", err)
+		return errors.New("Unable to establish connection with user database:" + err.Error())
+	}
 
+	cont := context.Background()
+
+	cxn, err := db.Conn(cont)
+	if err != nil{
+		log.Error("Failed to create database connection:",err)
+		return errors.New("Failed to create database connection" + err.Error())
 	}
 
 	d := DBcxn{
@@ -77,60 +89,87 @@ func (a *App) EstablishDbcxn()(error){
 		User:		conf.DBUser,
 		Port:		conf.DBPort,
 		UserTable:	conf.UserTable,
+		cxn:		cxn,
+		context:	&cont,
 	}
+
 	a.connection = &d
 	return nil
 }
 
-func (d *DBcxn) PostgresSelect(){
-	
+/*
+func (d *DBcxn) PostgresSelectUser(username string)(string, error){
+
+}
+*/
+
+/*------------------- User Auth Code -------------------------------*/
+
+//returns boolean for if email exists in database
+func (d *DBcxn) PostgresEmailExists(email string)(bool, error){
+	if err := d.cxn.PingContext(*d.context); err != nil{
+		return false, err
+	}
+
+	emailQuery := "select count(email) from " + d.UserTable
+	emailQuery += " where email=" + email + ";"
+
+	result, err := d.cxn.ExecContext(*d.context, emailQuery)
+	if err != nil{
+		log.Error(err)
+		return false, err
+	}
+
+	count, err := result.LastInsertId()
+	if err != nil{
+		log.Error(err)
+		return false, err
+	}
+
+	return count == 1, nil
 }
 
-func (a *App) ValidateUserLogin(email, password string)(bool){
+// returns the hashed password in the database given the email
+func (d *DBcxn) PostgresGetPassword(email string)([]byte, error){
+	// ping database connection for activity firstly
+	if err := d.cxn.PingContext(*d.context); err != nil{
+		return nil, err
+	}
+
+	passwordQuery := "select password from " + d.UserTable
+	passwordQuery = " where user=" + email + ";"
+
+	result := d.cxn.QueryRowContext(*d.context, passwordQuery)
+
+	i := struct{
+		password string
+	}{}
+
+	if err := result.Scan(i); err != nil{ //scans and puts row result to password interface
+		return nil, err
+	}
+
+	return []byte(i.password), nil
+}
+
+func (a *App) ValidateUserLogin(email, password string)(bool, error){
 	// this password needs to go through a hashing first
-	conf := a.Config
-	hashedPassword, err := HashPassword(password)
+
+	_, err := a.connection.PostgresEmailExists(email)
 	if err != nil{
-		log.Error("Cant hash the given password given")
-		return false
+		return false, err
 	}
 
-	
-	if err != nil {
-		log.Error(err)
-	}
-	defer db.Close()
-
-	log.Info("Established connection with database at port:",conf.DBPort)
-
-	if &conf.UserTable == nil || &conf.UserTable == ""{
-		log.Error("Table in configuation unexpectadly found to be blank")
-		return false
-	}
-
-	emailQuery := "select email from " + conf.UserTable
-	emailQuery += " where email=" + username
-
-	result, err := db.Exec(userQuery)
+	hash, err := a.connection.PostgresGetPassword(email)
 	if err != nil{
-		return false
-	}else if results != email{
-		return false
+		return false, err
 	}
 
-	passwordQuery := "select password from " + a.Config.UserTable
-	passwordQuery = " where user=" + username
-
-	result, err = db.Exec(passwordQuery);
+	err = bcrypt.CompareHashAndPassword(hash, []byte(password))
 	if err != nil{
-		return false
+		return false, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(result), []byte(password))
-	if err != nil{
-		return false
-	}
-
-	return true
+	return true, nil
 }
 

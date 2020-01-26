@@ -154,9 +154,11 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 		loginResponse(false, "Couldn't decode request body. Error thrown:" + err.Error())
 	}
 	// at this point we need to pass it over to the database instance to validate the request
-	if a.ValidateUserLogin(requestBody.Email, requestBody.Password) {
-		log.Info("User successfully authenticated. Rerouting to terminal page")
-		loginResponse(true, "")
+	if result, err := a.ValidateUserLogin(requestBody.Email, requestBody.Password); err == nil{
+		if result{
+			log.Info("User successfully authenticated. Rerouting to terminal page")
+			loginResponse(true, "")
+		}
 	}
 
 	log.Info("User information not found")
