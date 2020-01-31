@@ -7,7 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://kit.fontawesome.com/02e19dad27.js" crossorigin="anonymous"></script>
-<script src="scripts/login.js"></script>
 
 <style>
 
@@ -30,7 +29,7 @@
     <body>
 	<nav>
 		<div class="nav-wrapper blue darken-4">
-		<a href="/" class="brand-logo blue darken-4"><i class="material-icons">computer</i>Basic Interpreter</a>
+		<a href="/about" class="brand-logo blue darken-4"><i class="material-icons">computer</i>Basic Interpreter</a>
 			<ul id="nav-mobile" class="right hide-on-small-and-down blue darken-4 ">
 				<li><a href="/terminal"><i class="material-icons">code</i></a></li>
 				<li><a href="/login"><i class="material-icons">fingerprint</i></a></li>
@@ -60,13 +59,13 @@
 			     
 			      <div class="row">
 				<div class="input-field col s6">
-				  <input id="password" type="password" class="validate">
+				  <input id="create-password" type="password" class="validate">
 				  <label for="password">Password</label>
 				</div>
 		
 				<div class="input-field col s6">
-				  <input id="confirm_password" type="password" class="validate">
-				  <label for="confirm_password">Confirm Password</label>
+				  <input id="confirm-password" type="password" class="validate">
+				  <label for="confirm-password">Confirm Password</label>
 				</div>
 			      </div>
 			      
@@ -86,15 +85,15 @@
 			<br /> 
 			<h6> Or if you have used this before, Login in </h6>
 			<h4> Log into your basic interpreter instance! </h4>
-			    <form action="/SignIn" class="col s12">
+			    <form action="/loginAttempted" class="col s12">
 			      <div class="row">
 				<div class="input-field col s6">
-				  <input id="login-email" type="text" class="validate">
+				  <input name="login-email" id="login-email" type="text" class="validate"></input>
 				  <label for="login-email">Email</label>
 				</div>
-			
+				
 				<div class="input-field col s6">
-				  <input id="login-password" type="password" class="validate">
+				  <input name="login-password" id="login-password" type="password" class="validate"></input>
 				  <label for="login-password">Password</label>
 				</div>
 			      </div>
@@ -107,6 +106,96 @@
 		  </div>
 	</div>
     </body>
+	<script>
+
+	function login(){
+		email = document.getElementById('login-email').value;
+		password = document.getElementById('login-password').value;
+		console.log(email);
+		console.log(password);
+
+		var requestBody = JSON.stringify({
+		    Email: email,
+		    Password: password,
+		});
+		
+		fetch({{.Config.LoginURL}}, {
+			method:"POST",
+			credentials:"include",
+			body: requestBody,		
+		}).then(res => {
+			return res.json();
+		}).then(data => {
+			console.log(data);
+			window.location.replace("/terminal");
+		}).catch(err => {
+			console.log(err)
+		});
+	}
+
+	function signup(){
+		firstName = document.getElementById("first_name").value;
+		lastName = document.getElementById("last_name").value;
+		createPassword = document.getElementById("create-password").value;
+		confirmPassword = document.getElementById("confirm-password").value;
+		email = document.getElementById("email").value;
+
+		console.log(firstName)
+		console.log(lastName)
+		console.log(createPassword)
+		console.log(confirmPassword)
+		console.log(email)
+
+		if (confirmPassword == ""){
+			errorMessage("confirm password not filled in")	
+			return
+		} else if (createPassword == "") {
+			errorMessage("first name not filled in")	
+			return
+		} else if (firstName == "") {
+			errorMessage("first name not filled in")	
+			return
+		} else if (lastName == "") {
+			errorMessage("Last name not filled in")	
+			return
+		} else if (email == "") {
+			errorMessage("Email not filled in")	
+			return
+		} else if (createPassword != confirmPassword) {
+			errorMessage("Passwords must match")	
+			return
+		}
+
+		var requestBody = JSON.stringify({
+			FirstName: firstName,
+			LastName: lastName,
+			CreatePassword: createPassword,
+			ConfirmPassword: confirmPassword,
+			Email: email
+		});
+
+		fetch({{.Config.CreateAccountURL}}, {
+			method:"POST",
+			credentials:"include",
+			body: requestBody,		
+		}).then(res => {
+			return res.json();
+		}).then(data => {
+			console.log(data)
+			window.location.replace("/terminal");
+		}).catch(err => {
+			console.log(err)
+		});
+	}
+
+	function errorMessage(err){
+		console.log(err)
+	}
+
+	</script>
+
+	}
+	</script>
 
 
   </html>

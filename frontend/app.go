@@ -47,6 +47,14 @@ type AppConf struct{
 	TerminalOutputFile	string `json:"TerminalOutputFile"`
 }
 
+type RequestBody struct{
+	FirstName	string `json:"FirstName"`
+	LastName	string `json:"LastName"`
+	CreatePassword	string `json:"CreatePassword"`
+	ConfirmPassword	string `json:"ConfirmPassword"`
+	Email		string `json:"Email"`
+}
+
 type Session struct{
 	LoggedIn    bool
 	Username    string
@@ -139,10 +147,7 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 		}
 	}
 
-	requestBody := struct{
-		Email		string `json:"Email"`
-		Password	string `json:"Password"`
-	}{}
+	requestBody := RequestBody{}
 
 	if r.Method != "POST"{
 		log.Error("request method not aligned correctly for login function. Request Method:",r.Method)
@@ -158,16 +163,58 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 		if result{
 			log.Info("User successfully authenticated. Rerouting to terminal page")
 			loginResponse(true, "")
+			return
 		}
 	}
 
 	log.Info("User information not found")
-	loginResponse(false, "")
+	loginResponse(false, err.Error())
+	return
 }
 
 func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request){
-	log.Info("Attempted to create an account... handling now")
-	r.ParseForm()
+	log.Info("Attempted Login... handling now")
+	signUpResponse := func(success bool, statusMessage string){
+		response := struct{
+			Success bool		`json:"loginsucceeded"`
+			Messsage string		`json:"message"`
+		}{
+			success,
+			statusMessage,
+		}
+
+		writeThisResponse, err := json.Marshal(response);
+		if err != nil {
+			log.Error("Unable to create response for login page:",err)
+		}
+
+		_, err = w.Write(writeThisResponse);
+		if err != nil {
+			log.Error("Unable to write response for login attempt page:",err)
+		}
+	}
+
+	if r.Method != "POST"{
+		log.Error("request method not aligned correctly for login function. Request Method:",r.Method)
+		loginResponse(false,"request method not aligned correctly for login function. Current Request Method:" + r.Method)
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil{
+		log.Error("Couldn't decode request body. Error thrown:",err)
+		loginResponse(false, "Couldn't decode request body. Error thrown:" + err.Error())
+	}
+
+	if result, err := a.CreateUser(requestBody); err == nil{
+		if result{
+			log.Info("User successfully Created. Rerouting to terminal page")
+			loginResponse(true, "")
+			return
+		}
+	}
+
+	log.Info("User successfully Created. Rerouting to terminal page")
+	loginResponse(false, err.Error())
+	return
 }
 
 func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
@@ -187,3 +234,4 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 		log.Error(err)
 	}
 }
+

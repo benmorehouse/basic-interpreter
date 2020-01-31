@@ -11,7 +11,7 @@
 	"BasicOutFile":			"basicOut.json",
 	"BasicInFile":			"basicIn.json",
 
-	"AboutPageURL":			"/",
+	"AboutPageURL":			"/about",
 	"LoginPageURL":			"/login",
 	"TerminalPageURL":		"/terminal",
 	"GithubPageURL":		"/github",

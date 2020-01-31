@@ -5,6 +5,7 @@ import(
 	"database/sql"
 	"errors"
 	"context"
+	"math/rand"
 
 	"golang.org/x/crypto/bcrypt"
 	log "github.com/sirupsen/logrus"
@@ -39,11 +40,15 @@ func (a *App) EstablishDbcxn()(error){
 		return errors.New("DBName unexpectedly found nil")
 	}
 
-/* during testing we will leave this.
+/* 
+
+	during testing we will leave this.
+
 	if conf.DBPass == ""{
 		log.Error("DBPass unexpectedly found nil")
 		return errors.New("DBPass unexpectedly found nil")
 	}
+
 */
 
 	if &conf.DBPort == nil{
@@ -68,6 +73,7 @@ func (a *App) EstablishDbcxn()(error){
 		conf.DBPass,
 		conf.DBName,
 	)
+
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil{
 		log.Error("Unable to establish connection with user database:", err)
@@ -94,6 +100,12 @@ func (a *App) EstablishDbcxn()(error){
 	}
 
 	a.connection = &d
+
+	tableQuery := "create table " + a.Config.UserTable + "(userid varchar(80), password varchar(80), email varchar(80), firstname varchar(80), lastname varchar(80));"
+	if _, err = d.cxn.ExecContext(*d.context, tableQuery); err == nil {
+		return errors.New("User table didn't exist before... restart basic") // we need to add this to the CLI
+	}
+
 	return nil
 }
 
@@ -107,12 +119,18 @@ func (d *DBcxn) PostgresSelectUser(username string)(string, error){
 
 //returns boolean for if email exists in database
 func (d *DBcxn) PostgresEmailExists(email string)(bool, error){
-	if err := d.cxn.PingContext(*d.context); err != nil{
+	if email == "" {
+		log.Error("Didn't recieve an email in this function")
+		return false, errors.New("Didn't recieve an email in this function")
+	}
+
+	if err := d.cxn.PingContext(*d.context); err != nil {
 		return false, err
 	}
 
 	emailQuery := "select count(email) from " + d.UserTable
-	emailQuery += " where email=" + email + ";"
+	emailQuery += " where email=\"" + email + "\";"
+	log.Info("Email query:",emailQuery)
 
 	result, err := d.cxn.ExecContext(*d.context, emailQuery)
 	if err != nil{
@@ -121,7 +139,7 @@ func (d *DBcxn) PostgresEmailExists(email string)(bool, error){
 	}
 
 	count, err := result.LastInsertId()
-	if err != nil{
+	if err != nil {
 		log.Error(err)
 		return false, err
 	}
@@ -132,7 +150,7 @@ func (d *DBcxn) PostgresEmailExists(email string)(bool, error){
 // returns the hashed password in the database given the email
 func (d *DBcxn) PostgresGetPassword(email string)([]byte, error){
 	// ping database connection for activity firstly
-	if err := d.cxn.PingContext(*d.context); err != nil{
+	if err := d.cxn.PingContext(*d.context); err != nil {
 		return nil, err
 	}
 
@@ -145,7 +163,7 @@ func (d *DBcxn) PostgresGetPassword(email string)([]byte, error){
 		password string
 	}{}
 
-	if err := result.Scan(i); err != nil{ //scans and puts row result to password interface
+	if err := result.Scan(i); err != nil { //scans and puts row result to password interface
 		return nil, err
 	}
 
@@ -156,20 +174,71 @@ func (a *App) ValidateUserLogin(email, password string)(bool, error){
 	// this password needs to go through a hashing first
 
 	_, err := a.connection.PostgresEmailExists(email)
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
 	hash, err := a.connection.PostgresGetPassword(email)
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
 	err = bcrypt.CompareHashAndPassword(hash, []byte(password))
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
 	return true, nil
 }
 
+func (a *App) CreateUser(requestBody *RequestBody) (bool, error){
+	if &requestBody == nil {
+		return false, errors.New("Request body is nil")
+	}
+
+	exists, err := a.connection.PostgresEmailExists(requestBody.Email)
+	if err != nil {
+		return false, err
+	} else if exists == true{
+		return false, errors.New("Email already present in our database!")
+	}
+
+	// then now we need to create the user using the connection
+}
+
+func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
+	if err := d.cxn.PingContext(*d.context); err != nil {
+		return err
+	}
+
+	if err = PasswordStrength(requestBody.Password); err != nil{
+		return err
+	}
+
+	userId := generateUserId()
+	// have a first name, last, password, and email
+	insertQuery := "Insert into " + d.UserTable + " values \""
+	insertQuery += userId + "\", \"" + requestBody.FirstName + "\", \""
+	insertQuery += requestBody.LastName + "\"
+}
+
+func PasswordStrength(password string) error{
+	if password == ""{
+		return errors.New("Password has been left empty")
+	} else if len(password) < 8 {
+		return errors.New("Password must be 8 digits long")
+	}
+
+	return nil
+}
+
+func generateUserId()string{
+	rand.Seed(time.Now().UTC().UnixNano())
+	userid := ""
+
+	for i:=0; i<20; i++{
+		userid += strconv.Itoa(rand.Intn(10))
+	}
+
+	return userid
+}

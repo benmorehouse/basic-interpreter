@@ -8,6 +8,8 @@ import(
 )
 
 func main(){
+	setLogger()
+
 	log.Info("Basic Interpreter Server started")
 	a, err := NewApp()
 
@@ -35,4 +37,9 @@ func main(){
 	if err != nil{
 		log.Error(err)
 	}
+}
+
+func setLogger(){
+	// could expand on this function later on.
+	log.SetReportCaller(true)
 }

@@ -1,4 +1,3 @@
-
 function login(){
 	username = document.getElementById('login-password').value;
 	password = document.getElementById('login-password').value;
@@ -9,7 +8,7 @@ function login(){
 	    Username: username,
 	    Password: password,
 	});
-	
+	console({{.Config.LoginURL}})	
 	var fetchURL = "/" + {{.Config.LoginURL}};
 	console.log("fetching the following:", fetchURL)
 	
