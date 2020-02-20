@@ -149,30 +149,31 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 
 	requestBody := RequestBody{}
 
-	if r.Method != "POST"{
+	if r.Method != "POST" {
 		log.Error("request method not aligned correctly for login function. Request Method:",r.Method)
 		loginResponse(false,"request method not aligned correctly for login function. Current Request Method:" + r.Method)
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 		log.Error("Couldn't decode request body. Error thrown:",err)
 		loginResponse(false, "Couldn't decode request body. Error thrown:" + err.Error())
 	}
 	// at this point we need to pass it over to the database instance to validate the request
-	if result, err := a.ValidateUserLogin(requestBody.Email, requestBody.Password); err == nil{
-		if result{
+	if result, err := a.ValidateUserLogin(requestBody.Email, requestBody.CreatePassword); err == nil {
+		if result {
 			log.Info("User successfully authenticated. Rerouting to terminal page")
 			loginResponse(true, "")
 			return
 		}
+	} else {
+		log.Info("User information not found")
+		loginResponse(false, err.Error())
 	}
 
-	log.Info("User information not found")
-	loginResponse(false, err.Error())
 	return
 }
 
-func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request){
+func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 	log.Info("Attempted Login... handling now")
 	signUpResponse := func(success bool, statusMessage string){
 		response := struct{
@@ -196,24 +197,25 @@ func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request){
 
 	if r.Method != "POST"{
 		log.Error("request method not aligned correctly for login function. Request Method:",r.Method)
-		loginResponse(false,"request method not aligned correctly for login function. Current Request Method:" + r.Method)
+		signUpResponse(false,"request method not aligned correctly for login function. Current Request Method:" + r.Method)
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil{
 		log.Error("Couldn't decode request body. Error thrown:",err)
-		loginResponse(false, "Couldn't decode request body. Error thrown:" + err.Error())
+		signUpResponse(false, "Couldn't decode request body. Error thrown:" + err.Error())
 	}
 
 	if result, err := a.CreateUser(requestBody); err == nil{
 		if result{
 			log.Info("User successfully Created. Rerouting to terminal page")
-			loginResponse(true, "")
+			signUpResponse(true, "")
 			return
 		}
+	} else {
+		log.Info("User successfully Created. Rerouting to terminal page")
+		loginResponse(false, err.Error())
 	}
 
-	log.Info("User successfully Created. Rerouting to terminal page")
-	loginResponse(false, err.Error())
 	return
 }
 
