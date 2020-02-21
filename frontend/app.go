@@ -1,53 +1,21 @@
 package main
 
 import(
-	"os"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"html/template"
 
 	log "github.com/sirupsen/logrus"
 )
 
-type App struct{
+type App struct {
 	Pages	   []Page // we might not need this
 	User       *Session
 	Config	   *AppConf
 	connection *DBcxn
 }
 
-type AppConf struct{
-	Port			int    `json:"ServerPort"`
-
-	DBHost			string `json:"DBHost"`
-	DBName			string `json:"DBName"`
-	DBUser			string `json:"DBUser"`
-	DBPass			string `json:"DBPass"`
-	DBPort			int    `json:"DBPort"`
-	UserTable		string `json:"UserTable"`
-
-	BasicOutFile		string `json:"BasicOutFile"`
-	BasicInFile		string `json:"BasicInFile"`
-
-	AboutPageURL		string `json:"AboutPageURL"`
-	LoginPageURL		string `json:"LoginPageURL"`
-	LoginAttemptedPageURL	string `json:"LoginAttemptedPageURL"`
-	TerminalPageURL		string `json:"TerminalPageURL"`
-	GithubPageURL		string `json:"GithubPageURL"`
-	CreateAccountURL	string `json:"CreateAccountURL"`
-	LoginURL		string `json:"LoginAttemptedURL"`
-
-	AboutPageFile		string `json:"AboutPageFile"`
-	LoginPageFile		string `json:"LoginPageFile"`
-	TerminalPageFile	string `json:"TerminalPageFile"`
-	GithubPageFile		string `json:"GithubPageFile"`
-
-	TerminalInputFile	string `json:"TerminalInputFile"`
-	TerminalOutputFile	string `json:"TerminalOutputFile"`
-}
-
-type RequestBody struct{
+type RequestBody struct {
 	FirstName	string `json:"FirstName"`
 	LastName	string `json:"LastName"`
 	CreatePassword	string `json:"CreatePassword"`
@@ -55,42 +23,15 @@ type RequestBody struct{
 	Email		string `json:"Email"`
 }
 
-type Session struct{
+type Session struct {
 	LoggedIn    bool
 	Username    string
 }
 
-func NewApp() (*App, error){
-	jsonFile, err := os.Open("conf.json")
-	defer jsonFile.Close()
-	if err != nil{
-		return nil, err
-	}
+func NewApp() (*App, error) {
 
-	config := AppConf{}
-
-	confData, err := ioutil.ReadAll(jsonFile)
-	if err != nil{
-		return nil, err
-	}
-
-	if err = json.Unmarshal(confData, &config); err != nil{
-		return nil, err
-	}
-
-	session := Session{
-		LoggedIn: false,
-		Username: "",
-	}
-
-	if err != nil{
-		return nil, err
-	}
-
-	a := App{
-		User: &session,
-		Config: &config,
-	}
+	a := App{}
+	a.LoadConfig()
 
 	pages := []Page{
 		a.LoadAboutPage(),
@@ -99,15 +40,22 @@ func NewApp() (*App, error){
 		a.LoadTerminalPage(),
 	}
 	a.Pages = pages
-	if err = a.EstablishDbcxn(); err != nil{
+	if err := a.EstablishDbcxn(); err != nil{
 		log.Error(err)
 		return nil, err
 	}
 
+
 	return &a, nil
 }
 
-func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
+func (a *App) RedirectIndex(w http.ResponseWriter, r *http.Request) {
+
+	http.Redirect(w, r, "localhost:2272/about", 301)
+}
+
+func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request) {
+
 	log.Info("About Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.AboutPageFile))
 	err := basicTemplate.Execute(w, a)
@@ -116,7 +64,8 @@ func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
+func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request) {
+
 	log.Info("Login Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
 	err := basicTemplate.Execute(w, a)
@@ -125,7 +74,8 @@ func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
+func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request) {
+
 	log.Info("Attempted Login... handling now")
 	loginResponse := func(success bool, statusMessage string){
 		response := struct{
@@ -174,6 +124,7 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request){
 }
 
 func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
+
 	log.Info("Attempted Login... handling now")
 	signUpResponse := func(success bool, statusMessage string){
 		response := struct{
@@ -195,6 +146,8 @@ func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	requestBody := &RequestBody{}
+
 	if r.Method != "POST"{
 		log.Error("request method not aligned correctly for login function. Request Method:",r.Method)
 		signUpResponse(false,"request method not aligned correctly for login function. Current Request Method:" + r.Method)
@@ -213,13 +166,14 @@ func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		log.Info("User successfully Created. Rerouting to terminal page")
-		loginResponse(false, err.Error())
+		signUpResponse(false, err.Error())
 	}
 
 	return
 }
 
-func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
+func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request) {
+
 	log.Info("Github Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.GithubPageFile))
 	err := basicTemplate.Execute(w, nil)
@@ -228,7 +182,8 @@ func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
+func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request) {
+
 	log.Info("Terminal Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.TerminalPageFile))
 	err := basicTemplate.Execute(w, nil)
@@ -236,4 +191,5 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request){
 		log.Error(err)
 	}
 }
+
 

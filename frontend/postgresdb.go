@@ -3,7 +3,9 @@ package main
 import(
 	"fmt"
 	"database/sql"
+	"strconv"
 	"errors"
+	"time"
 	"context"
 	"math/rand"
 
@@ -203,7 +205,12 @@ func (a *App) CreateUser(requestBody *RequestBody) (bool, error){
 		return false, errors.New("Email already present in our database!")
 	}
 
-	// then now we need to create the user using the connection
+	if err := a.connection.PostgresCreateUser(requestBody); err != nil {
+		log.Error(err)
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
@@ -211,15 +218,22 @@ func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
 		return err
 	}
 
-	if err = PasswordStrength(requestBody.Password); err != nil{
+	if err := PasswordStrength(requestBody.ConfirmPassword); err != nil{
 		return err
 	}
 
 	userId := generateUserId()
-	// have a first name, last, password, and email
-	insertQuery := "Insert into " + d.UserTable + " values \""
-	insertQuery += userId + "\", \"" + requestBody.FirstName + "\", \""
-	insertQuery += requestBody.LastName + "\"
+	s := "Inset into %s values(\"%s\",\"%s\",\"%s\",\"%s\")"
+
+	insertQuery := fmt.Sprintf(s, d.UserTable, userId, requestBody.FirstName, requestBody.LastName, requestBody.Email)
+
+	_, err := d.cxn.ExecContext(*d.context, insertQuery)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
 }
 
 func PasswordStrength(password string) error{

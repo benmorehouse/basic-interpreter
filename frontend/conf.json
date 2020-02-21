@@ -1,5 +1,5 @@
 {
-	"ServerPort":2272,
+	"Port":2272,
 
 	"DBHost":			"localhost",
 	"DBName":			"basicinterpreter",
@@ -16,7 +16,7 @@
 	"TerminalPageURL":		"/terminal",
 	"GithubPageURL":		"/github",
 	"CreateAccountURL":		"/createAccount",
-	"LoginAttemptedURL":		"/loginAttempted",
+	"LoginAttemptedPageURL":	"/loginAttempted",
 
 	"AboutPageFile":		"pages/about.gohtml",
 	"LoginPageFile":		"pages/login.gohtml",
