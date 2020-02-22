@@ -84,8 +84,8 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request) {
 	log.Info("Attempted Login... handling now")
 	loginResponse := func(success bool, statusMessage string){
 		response := struct{
-			Success bool		`json:"loginsucceeded"`
-			Messsage string		`json:"message"`
+			Success bool		`json:"Success"`
+			Messsage string		`json:"Message"`
 		}{
 			success,
 			statusMessage,
@@ -137,8 +137,8 @@ func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 	log.Info("Attempted Login... handling now")
 	signUpResponse := func(success bool, statusMessage string){
 		response := struct{
-			Success bool		`json:"loginsucceeded"`
-			Messsage string		`json:"message"`
+			Success bool		`json:"Success"`
+			Message string		`json:"Message"`
 		}{
 			success,
 			statusMessage,
