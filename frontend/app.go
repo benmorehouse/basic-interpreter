@@ -33,6 +33,11 @@ func NewApp() (*App, error) {
 	a := App{}
 	a.LoadConfig()
 
+	a.User = &Session{
+		LoggedIn: false,
+		Username: "",
+	}
+
 	pages := []Page{
 		a.LoadAboutPage(),
 		a.LoadLoginPage(),
@@ -84,6 +89,10 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request) {
 		}{
 			success,
 			statusMessage,
+		}
+
+		if !success {
+			log.Error(statusMessage)
 		}
 
 		writeThisResponse, err := json.Marshal(response);
