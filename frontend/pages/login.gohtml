@@ -10,19 +10,31 @@
 
 <style>
 
-.nav-wrapper{
-	padding-top:-10px;
-	padding-left:10px;
-	padding-bottom:70px;
-}
+	.nav-wrapper {
+		padding-top:-10px;
+		padding-left:10px;
+		padding-bottom:70px;
+	}
 
-.container{
-	min-height:800px;
-}
+	.container {
+		min-height:800px;
+	}
 
-.container > p{
-	padding:10px;
-}
+	.container > p {
+		padding:10px;
+	}
+
+	#loginErrorMessage {
+		color:red;
+		margin-left:auto;
+		margin-right:auto;
+	}
+
+	#signUpErrorMessage {
+		color:red;
+		margin-left:auto;
+		margin-right:auto;
+	}
 
 </style>
 </head> 
@@ -76,7 +88,7 @@
 				</div>
 			      </div>
 			    </form>
-
+			<div id="signUpErrorMessage"></div>
 		        <button class="btn waves-effect waves-light blue darken-4" type="submit" name="createAccount" onClick="signup()">Sign Up
 			    <i class="material-icons right"></i>
 			</button>
@@ -99,6 +111,7 @@
 			      </div>
 			    </form>
 			
+			<div id="loginErrorMessage"></div>
 		        <button class="btn waves-effect waves-light blue darken-4" name="createAccount" onclick="login()">Login
 			    <i class="material-icons right"></i>
 			</button>
@@ -116,7 +129,7 @@
 
 		var requestBody = JSON.stringify({
 		    Email: email,
-		    Password: password
+		    CreatePassword: password
 		});
 	
 		fetch({{.Config.LoginAttemptedPageURL}}, {
@@ -127,17 +140,18 @@
 			return res.json();
 		}).then(data => {
 			if (!data.Success) {
-				
+				handleLoginMessage(data.Message)
+				return 
 			}
-			console.log(data);
-		//	window.location.replace("/terminal");
+			window.location.replace("/terminal");
 		}).catch(err => {
 			console.log(err)
 		});
 	}
 
-	function handleLoginMessage(errorMessage) {
-
+	function handleLoginMessage(err) {
+		loginErrorBox = document.getElementById('loginErrorMessage');
+		loginErrorBox.innerHTML = err;
 	}
 
 	function signup() {
@@ -202,7 +216,8 @@
 	}
 
 	function handleSignUpError(err){
-		console.error(err)
+		signUpErrorBox = document.getElementById('signUpErrorMessage');
+		signUpErrorBox.innerHTML = err;
 	}
 
   </script>

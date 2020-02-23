@@ -6,9 +6,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://kit.fontawesome.com/02e19dad27.js" crossorigin="anonymous">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.css"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.js"></script>
+<script rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.css"></script>
 
 </script>
 <style>
@@ -39,12 +38,16 @@
 		</div>
 	</nav>
 
-	<div id="terminal"></div>
-
+	<div id="body-container">
+		<div class="container low-text z-depth-2 center-align">
+			<div id="terminal"></div>
+		</div>
+	</div>
+  
 	<script>
 		var term = new Terminal();
 		term.open(document.getElementById('terminal'));
-		term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ')
+		term.write('Hello from me');
 	</script>
     </body>
   </html>

@@ -5,9 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"math/rand"
-	"strconv"
-	"time"
 
 	_ "github.com/lib/pq" // driver for postgresql database
 	log "github.com/sirupsen/logrus"
@@ -117,7 +114,7 @@ func (a *App) createTableIfNotExists() error {
 	query += `
 	(
 		userid varchar(30),
-		password varchar(30),
+		password text,
 		email varchar(30),
 		firstname varchar(30),
 		lastname varchar(30)
@@ -169,64 +166,22 @@ func (d *DBcxn) PostgresEmailExists(email string) (bool, error) {
 func (d *DBcxn) PostgresGetPassword(email string) ([]byte, error) {
 	// ping database connection for activity firstly
 	if err := d.cxn.PingContext(*d.context); err != nil {
+		log.Error(err)
 		return nil, err
 	}
 
-	passwordQuery := "select password from " + d.UserTable
-	passwordQuery = " where user='" + email + "';"
-
+	s := "select password from %s where email='%s';"
+	passwordQuery := fmt.Sprintf(s, d.UserTable, email)
+	log.Info(passwordQuery)
 	result := d.cxn.QueryRowContext(*d.context, passwordQuery)
 
-	i := struct {
-		password string
-	}{}
-
-	if err := result.Scan(i); err != nil { //scans and puts row result to password interface
+	var password string
+	if err := result.Scan(&password); err != nil { //scans and puts row result to password interface
+		log.Error(err)
 		return nil, err
 	}
 
-	return []byte(i.password), nil
-}
-
-func (a *App) ValidateUserLogin(email, password string) (bool, error) {
-	// this password needs to go through a hashing first
-
-	_, err := a.connection.PostgresEmailExists(email)
-	if err != nil {
-		return false, err
-	}
-
-	hash, err := a.connection.PostgresGetPassword(email)
-	if err != nil {
-		return false, err
-	}
-
-	err = bcrypt.CompareHashAndPassword(hash, []byte(password))
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
-func (a *App) CreateUser(requestBody *RequestBody) error {
-	if &requestBody == nil {
-		return errors.New("Request body is nil")
-	}
-
-	exists, err := a.connection.PostgresEmailExists(requestBody.Email)
-	if err != nil {
-		return err
-	} else if exists == true {
-		return errors.New("Email already present in our database!")
-	}
-
-	if err := a.connection.PostgresCreateUser(requestBody); err != nil {
-		log.Error(err)
-		return err
-	}
-
-	return nil
+	return []byte(password), nil
 }
 
 func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
@@ -239,12 +194,20 @@ func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
 	}
 
 	userId := generateUserId()
-	s := "Inset into %s values('%s','%s','%s','%s')"
+	s := "Insert into %s(userid, password, email, firstname, lastname) values('%s','%s','%s','%s','%s')"
 
-	insertQuery := fmt.Sprintf(s, d.UserTable, userId, requestBody.FirstName, requestBody.LastName, requestBody.Email)
-
-	_, err := d.cxn.ExecContext(*d.context, insertQuery)
+	password, err := bcrypt.GenerateFromPassword([]byte(requestBody.CreatePassword), 10)
 	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	insertQuery := fmt.Sprintf(s, d.UserTable, userId,
+		password, requestBody.Email,
+		requestBody.FirstName, requestBody.LastName)
+
+	log.Info(insertQuery)
+	if _, err := d.cxn.ExecContext(*d.context, insertQuery); err != nil {
 		log.Error(err)
 		return err
 	}
@@ -252,23 +215,4 @@ func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
 	return nil
 }
 
-func PasswordStrength(password string) error {
-	if password == "" {
-		return errors.New("Password has been left empty")
-	} else if len(password) < 8 {
-		return errors.New("Password must be 8 digits long")
-	}
-
-	return nil
-}
-
-func generateUserId() string {
-	rand.Seed(time.Now().UTC().UnixNano())
-	userid := ""
-
-	for i := 0; i < 20; i++ {
-		userid += strconv.Itoa(rand.Intn(10))
-	}
-
-	return userid
-}
+/*------------------- User Auth Code -------------------------------*/
