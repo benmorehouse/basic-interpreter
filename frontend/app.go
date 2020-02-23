@@ -11,14 +11,6 @@ type App struct {
 	connection *DBcxn
 }
 
-type RequestBody struct {
-	FirstName       string `json:"FirstName"`
-	LastName        string `json:"LastName"`
-	CreatePassword  string `json:"CreatePassword"`
-	ConfirmPassword string `json:"ConfirmPassword"`
-	Email           string `json:"Email"`
-}
-
 func NewApp() (*App, error) {
 
 	a := App{}

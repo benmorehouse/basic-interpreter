@@ -24,6 +24,9 @@
 	"GithubPageFile":		"pages/github.gohtml",
 
 	"TerminalInputFile":		"terminalInput.txt",
-	"TerminalOutputFile":		"terminalOutput.txt"
+	"TerminalOutputFile":		"terminalOutput.txt",
+
+	"PathToOperatingSystem":	"../backend/OperatingSystem",
+	"PathToBasicInterpreter":	"../backend/BasicInterpreter"
 }
 

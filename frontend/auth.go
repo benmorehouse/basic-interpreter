@@ -45,7 +45,7 @@ func (a *App) ValidateUserLogin(email, password string) (bool, error) {
 	return true, nil
 }
 
-func (a *App) CreateUser(requestBody *RequestBody) error {
+func (a *App) CreateUser(requestBody *AuthRequestBody) error {
 	if &requestBody == nil {
 		return errors.New("Request body is nil")
 	}

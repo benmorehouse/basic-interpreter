@@ -17,7 +17,6 @@ func main() {
 	var init = &cobra.Command{
 		Use:   "init", // will run everytime you type nothing in
 		Short: "Initialize your basic interpreter server",
-		//Run:
 	}
 
 	root.AddCommand(init)

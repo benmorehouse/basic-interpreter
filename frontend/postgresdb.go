@@ -184,7 +184,7 @@ func (d *DBcxn) PostgresGetPassword(email string) ([]byte, error) {
 	return []byte(password), nil
 }
 
-func (d *DBcxn) PostgresCreateUser(requestBody *RequestBody) error {
+func (d *DBcxn) PostgresCreateUser(requestBody *AuthRequestBody) error {
 	if err := d.cxn.PingContext(*d.context); err != nil {
 		return err
 	}

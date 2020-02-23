@@ -9,28 +9,30 @@ import (
 )
 
 type AppConf struct {
-	Port                  int    `json:ServerPort`
-	DBHost                string `json:DBHost`
-	DBName                string `json:DBName`
-	DBUser                string `json:DBUser`
-	DBPass                string `json:DBPass`
-	DBPort                int    `json:DBPort`
-	UserTable             string `json:UserTable`
-	BasicOutFile          string `json:BasicOutFile`
-	BasicInFile           string `json:BasicInFile`
-	AboutPageURL          string `json:AboutPageURL`
-	LoginPageURL          string `json:LoginPageURL`
-	LoginAttemptedPageURL string `json:LoginAttemptedPageURL`
-	TerminalPageURL       string `json:TerminalPageURL`
-	GithubPageURL         string `json:GithubPageURL`
-	CreateAccountURL      string `json:CreateAccountURL`
-	LoginURL              string `json:LoginAttemptedURL`
-	AboutPageFile         string `json:AboutPageFile`
-	LoginPageFile         string `json:LoginPageFile`
-	TerminalPageFile      string `json:TerminalPageFile`
-	GithubPageFile        string `json:GithubPageFile`
-	TerminalInputFile     string `json:TerminalInputFile`
-	TerminalOutputFile    string `json:TerminalOutputFile`
+	Port                   int    `json:ServerPort`
+	DBHost                 string `json:DBHost`
+	DBName                 string `json:DBName`
+	DBUser                 string `json:DBUser`
+	DBPass                 string `json:DBPass`
+	DBPort                 int    `json:DBPort`
+	UserTable              string `json:UserTable`
+	BasicOutFile           string `json:BasicOutFile`
+	BasicInFile            string `json:BasicInFile`
+	AboutPageURL           string `json:AboutPageURL`
+	LoginPageURL           string `json:LoginPageURL`
+	LoginAttemptedPageURL  string `json:LoginAttemptedPageURL`
+	TerminalPageURL        string `json:TerminalPageURL`
+	GithubPageURL          string `json:GithubPageURL`
+	CreateAccountURL       string `json:CreateAccountURL`
+	LoginURL               string `json:LoginAttemptedURL`
+	AboutPageFile          string `json:AboutPageFile`
+	LoginPageFile          string `json:LoginPageFile`
+	TerminalPageFile       string `json:TerminalPageFile`
+	GithubPageFile         string `json:GithubPageFile`
+	TerminalInputFile      string `json:TerminalInputFile`
+	TerminalOutputFile     string `json:TerminalOutputFile`
+	PathToOperatingSystem  string `json:PathToOperatingSystem`
+	PathToBasicInterpreter string `json:PathToBasicInterpreter`
 }
 
 func (a *App) LoadConfig() {
