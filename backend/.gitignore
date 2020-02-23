@@ -1,0 +1,10 @@
+# Utils
+
+# Logging
+
+utils/log/log.o
+
+# Operating System
+
+operatingSystem/os
+operatingSystem/os.dSYM
