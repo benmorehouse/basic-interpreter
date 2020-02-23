@@ -5,9 +5,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script src="https://kit.fontawesome.com/02e19dad27.js" crossorigin="anonymous">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.js"></script>
-<script rel="stylesheet" src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.css"></script>
+<script src="https://kit.fontawesome.com/02e19dad27.js" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css">
 
 </script>
 <style>
@@ -24,6 +25,13 @@
 .container > p{
 	padding:10px;
 }
+
+#terminal {
+	margin-left:100px;
+	margin-right:100px;
+	margin-top:100px;
+	color: brown;
+}
 </style>
 </head> 
     <body>
@@ -38,16 +46,53 @@
 		</div>
 	</nav>
 
-	<div id="body-container">
-		<div class="container low-text z-depth-2 center-align">
-			<div id="terminal"></div>
-		</div>
-	</div>
+	<div id="terminal"></div>
   
 	<script>
-		var term = new Terminal();
+		var term = new Terminal({
+			theme: {
+				background: '#004671'
+			}
+		});
+		// the color for the font is #54a0cb		
 		term.open(document.getElementById('terminal'));
-		term.write('Hello from me');
+
+		function runBasicTerminal() {
+			if (term._initialized) {
+			    return;
+			}
+
+			term._initialized = true;
+
+			term.prompt = () => {
+			    term.write('\r\n$ ');
+			};
+
+			term.writeln('Welcome to your Basic Interpreter Instance!');
+			term.writeln('');
+			prompt(term);
+
+			term.onKey(e => {
+			    const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
+
+			    if (e.domEvent.keyCode === 13) {
+				console.log(e.domEvent.keyCode)
+				prompt(term);
+			    } else if (e.domEvent.keyCode === 8) {
+				// Do not delete the prompt
+				if (term._core.buffer.x > 2) {
+				    term.write('\b \b');
+				}
+			    } else if (printable) {
+				term.write(e.key);
+			    }
+			});
+		}
+
+		function prompt(term) {
+			term.write('\r\n$ ');
+		}
+		runBasicTerminal();
 	</script>
     </body>
   </html>
