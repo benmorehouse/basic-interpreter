@@ -25,4 +25,3 @@ The functionality itself will take in command line arguments. This will integrat
 Going to have a top level class that will act as a guideline for the two subclasses for error handling.
 
 There will then be individual classes for errorHandling for the basic interpreter and the operating system itself.
-
