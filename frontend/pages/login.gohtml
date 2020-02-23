@@ -77,7 +77,7 @@
 			      </div>
 			    </form>
 
-		        <button class="btn waves-effect waves-light blue darken-4" type="submit" name="createAccount">Sign Up
+		        <button class="btn waves-effect waves-light blue darken-4" type="submit" name="createAccount" onClick="signup()">Sign Up
 			    <i class="material-icons right"></i>
 			</button>
 
@@ -154,22 +154,22 @@
 		console.log(email)
 
 		if (confirmPassword == ""){
-			errorMessage("confirm password not filled in")	
+			handleSignUpError("confirm password not filled in")	
 			return
 		} else if (createPassword == "") {
-			errorMessage("first name not filled in")	
+			handleSignUpError("create password not filled in")	
 			return
 		} else if (firstName == "") {
-			errorMessage("first name not filled in")	
+			handleSignUpError("first name not filled in")	
 			return
 		} else if (lastName == "") {
-			errorMessage("Last name not filled in")	
+			handleSignUpError("last name not filled in")	
 			return
 		} else if (email == "") {
-			errorMessage("Email not filled in")	
+			handleSignUpError("Email not filled in")	
 			return
 		} else if (createPassword != confirmPassword) {
-			errorMessage("Passwords must match")	
+			handleSignUpError("Passwords must match")	
 			return
 		}
 
@@ -190,7 +190,11 @@
 		}).then(res => {
 			return res.json();
 		}).then(data => {
-			console.log(data)
+			if (!data.Success) {
+				handleSignUpError(data.Message)
+				return
+			}
+
 			window.location.replace("/terminal");
 		}).catch(err => {
 			console.log(err)
@@ -198,7 +202,7 @@
 	}
 
 	function handleSignUpError(err){
-		console.log(err)
+		console.error(err)
 	}
 
   </script>
