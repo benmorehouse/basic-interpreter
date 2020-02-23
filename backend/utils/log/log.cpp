@@ -12,10 +12,6 @@
 
 //######################################################
 
-Logger::Logger() {}
-
-Logger::~Logger() {}
-
 void Logger::Error(std::string err) {
 	std::cout << RED << "ERROR: " << err << RESET << std::endl;
 }
