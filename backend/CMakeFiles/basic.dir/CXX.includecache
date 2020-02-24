@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+string
+-
+
+/Users/benmorehouse/repositories/basicInterpreter/backend/main.cpp
+iostream
+-
+include/logger.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+
