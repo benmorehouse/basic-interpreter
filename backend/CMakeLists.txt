@@ -1,8 +1,0 @@
-cmake_minimum_required(VERSION 2.8.9)
-project (backend)
-include_directories(include)
-add_executable(basic main.cpp)
-file(GLOB SOURCES "src/*.cpp")
-add_definitions("-Wno-c++11-extensions")
-install(TARGETS basic DESTINATION bin)
-set(SOURCES src/logger.cpp)

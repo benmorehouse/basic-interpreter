@@ -10,10 +10,10 @@ class Logger {
 
 class OperatingSystemLogger : protected Logger {
 	public:
-		OperatingSystemLogger();
-		~OperatingSystemLogger();
 		void Error(std::string) override;
 		void Warning(std::string) override;
 		void Info(std::string) override;
 		void Debug(std::string) override;
 };
+
+

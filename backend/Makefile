@@ -56,52 +56,6 @@ CMAKE_BINARY_DIR = /Users/benmorehouse/repositories/basicInterpreter/backend
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/local/Cellar/cmake/3.16.4/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/local/Cellar/cmake/3.16.4/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/local/Cellar/cmake/3.16.4/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/local/Cellar/cmake/3.16.4/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/local/Cellar/cmake/3.16.4/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/local/Cellar/cmake/3.16.4/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -157,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named basic
+# Target rules for targets named someTest
 
 # Build rule for target.
-basic: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 basic
-.PHONY : basic
+someTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 someTest
+.PHONY : someTest
 
 # fast build rule for target.
-basic/fast:
-	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/build
-.PHONY : basic/fast
+someTest/fast:
+	$(MAKE) -f CMakeFiles/someTest.dir/build.make CMakeFiles/someTest.dir/build
+.PHONY : someTest/fast
 
-main.o: main.cpp.o
+src/logger.o: src/logger.cpp.o
 
-.PHONY : main.o
+.PHONY : src/logger.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/main.cpp.o
-.PHONY : main.cpp.o
+src/logger.cpp.o:
+	$(MAKE) -f CMakeFiles/someTest.dir/build.make CMakeFiles/someTest.dir/src/logger.cpp.o
+.PHONY : src/logger.cpp.o
 
-main.i: main.cpp.i
+src/logger.i: src/logger.cpp.i
 
-.PHONY : main.i
+.PHONY : src/logger.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/logger.cpp.i:
+	$(MAKE) -f CMakeFiles/someTest.dir/build.make CMakeFiles/someTest.dir/src/logger.cpp.i
+.PHONY : src/logger.cpp.i
 
-main.s: main.cpp.s
+src/logger.s: src/logger.cpp.s
 
-.PHONY : main.s
+.PHONY : src/logger.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/logger.cpp.s:
+	$(MAKE) -f CMakeFiles/someTest.dir/build.make CMakeFiles/someTest.dir/src/logger.cpp.s
+.PHONY : src/logger.cpp.s
 
 # Help Target
 help:
@@ -202,16 +156,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/local"
-	@echo "... install/strip"
-	@echo "... basic"
-	@echo "... install"
-	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... someTest"
+	@echo "... src/logger.o"
+	@echo "... src/logger.i"
+	@echo "... src/logger.s"
 .PHONY : help
 
 
