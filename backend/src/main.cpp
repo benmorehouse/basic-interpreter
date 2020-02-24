@@ -1,7 +1,15 @@
 #include "../include/logger.h"
+#include "../include/os.h"
 
-int main() {
-	OperatingSystemLogger *logger = new OperatingSystemLogger();
-	logger->Error("This is an error");
-	delete logger;
+int main(int argc, char **argv) {
+	Logger *log = new Logger();
+	OperatingSystem *os = new OperatingSystem();
+	
+	if(argc < 2) {
+		log->Error("Not enough arugments given for operating system");
+		return 0;
+	}
+
+	delete log;
+	delete os;
 }

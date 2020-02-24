@@ -177,6 +177,33 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/os.o: src/os.cpp.o
+
+.PHONY : src/os.o
+
+# target to build an object file
+src/os.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/os.cpp.o
+.PHONY : src/os.cpp.o
+
+src/os.i: src/os.cpp.i
+
+.PHONY : src/os.i
+
+# target to preprocess a source file
+src/os.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/os.cpp.i
+.PHONY : src/os.cpp.i
+
+src/os.s: src/os.cpp.s
+
+.PHONY : src/os.s
+
+# target to generate assembly for a file
+src/os.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/os.cpp.s
+.PHONY : src/os.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +219,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/os.o"
+	@echo "... src/os.i"
+	@echo "... src/os.s"
 .PHONY : help
 
 

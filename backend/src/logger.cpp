@@ -8,7 +8,8 @@
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      
 #define YELLOW  "\033[33m"     
-#define BLUE    "\033[34m"      
+#define BLUE    "\033[34m"  
+#define CYAN    "\033[36m"
 #define OS 	"OS::" 
 
 //######################################################
@@ -33,26 +34,24 @@ void Logger::Debug(std::string err) {
 //######################################################
 //############# Operating system logger ################
 
-OperatingSystemLogger::OperatingSystemLogger() : Logger(){
-	std::cout<<"Initialized"<<std::endl;
-}
+OperatingSystemLogger::OperatingSystemLogger() : Logger(){}
 
-OperatingSystemLogger::~OperatingSystemLogger() {
-	std::cout<<"Deleted"<<std::endl;
-}
+
+OperatingSystemLogger::~OperatingSystemLogger() {}
+
 
 void OperatingSystemLogger::Error(std::string err) {
 	std::cout << OS << RED << "ERROR: " << err << RESET << std::endl;
 }
 
 void OperatingSystemLogger::Warning(std::string err) {
-	std::cout << OS << RED << "ERROR: " << err << RESET << std::endl;
+	std::cout << OS << YELLOW << "ERROR: " << err << RESET << std::endl;
 }
 
 void OperatingSystemLogger::Info(std::string err) {
-	std::cout << OS << RED << "ERROR: " << err << RESET << std::endl;
+	std::cout << OS << BLUE << "ERROR: " << err << RESET << std::endl;
 }
 
 void OperatingSystemLogger::Debug(std::string err) {
-	std::cout << OS << RED << "ERROR: " << err << RESET << std::endl;
+	std::cout << OS << CYAN << "ERROR: " << err << RESET << std::endl;
 }

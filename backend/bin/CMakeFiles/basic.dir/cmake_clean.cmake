@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/basic.dir/src/logger.cpp.o"
   "CMakeFiles/basic.dir/src/main.cpp.o"
+  "CMakeFiles/basic.dir/src/os.cpp.o"
   "basic"
   "basic.pdb"
 )

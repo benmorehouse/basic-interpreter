@@ -6,4 +6,9 @@ CMakeFiles/basic.dir/src/logger.cpp.o
  /Users/benmorehouse/repositories/basicInterpreter/backend/src/logger.cpp
 CMakeFiles/basic.dir/src/main.cpp.o
  /Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+ /Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
  /Users/benmorehouse/repositories/basicInterpreter/backend/src/main.cpp
+CMakeFiles/basic.dir/src/os.cpp.o
+ /Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+ /Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
+ /Users/benmorehouse/repositories/basicInterpreter/backend/src/os.cpp

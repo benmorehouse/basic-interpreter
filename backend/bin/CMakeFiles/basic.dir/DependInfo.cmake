@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/benmorehouse/repositories/basicInterpreter/backend/src/logger.cpp" "/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles/basic.dir/src/logger.cpp.o"
   "/Users/benmorehouse/repositories/basicInterpreter/backend/src/main.cpp" "/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles/basic.dir/src/main.cpp.o"
+  "/Users/benmorehouse/repositories/basicInterpreter/backend/src/os.cpp" "/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles/basic.dir/src/os.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

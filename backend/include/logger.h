@@ -1,3 +1,6 @@
+#ifndef LOGGER_H
+#define LOGGER_H
+
 #include <string>
 
 class Logger {
@@ -20,4 +23,5 @@ class OperatingSystemLogger : protected Logger {
 		void Debug(std::string);
 };
 
+#endif
 
