@@ -2,6 +2,8 @@
 
 class Logger {
 	public:
+		Logger(){};
+		~Logger(){};
 		virtual void Error(std::string);
 		virtual void Warning(std::string);
 		virtual void Info(std::string);
@@ -10,10 +12,12 @@ class Logger {
 
 class OperatingSystemLogger : protected Logger {
 	public:
-		void Error(std::string) override;
-		void Warning(std::string) override;
-		void Info(std::string) override;
-		void Debug(std::string) override;
+		OperatingSystemLogger();
+		~OperatingSystemLogger() ;
+		void Error(std::string);
+		void Warning(std::string);
+		void Info(std::string);
+		void Debug(std::string);
 };
 
 

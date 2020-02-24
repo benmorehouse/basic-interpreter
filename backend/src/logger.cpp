@@ -33,7 +33,7 @@ void Logger::Debug(std::string err) {
 //######################################################
 //############# Operating system logger ################
 
-OperatingSystemLogger::OperatingSystemLogger() {
+OperatingSystemLogger::OperatingSystemLogger() : Logger(){
 	std::cout<<"Initialized"<<std::endl;
 }
 
@@ -56,4 +56,3 @@ void OperatingSystemLogger::Info(std::string err) {
 void OperatingSystemLogger::Debug(std::string err) {
 	std::cout << OS << RED << "ERROR: " << err << RESET << std::endl;
 }
-
