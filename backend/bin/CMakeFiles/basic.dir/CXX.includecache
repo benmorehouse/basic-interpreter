@@ -18,18 +18,14 @@ string
 map
 -
 
-/Users/benmorehouse/repositories/basicInterpreter/backend/src/main.cpp
-../include/logger.h
-/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
-../include/os.h
-/Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
-
 /Users/benmorehouse/repositories/basicInterpreter/backend/src/os.cpp
 ../include/os.h
 /Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
 ../include/logger.h
 /Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
 string
+-
+iostream
 -
 map
 -

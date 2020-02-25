@@ -9,7 +9,7 @@ class OperatingSystem {
 	public:
 		OperatingSystem();
 		~OperatingSystem();
-		void Operate(std::string);
+		void Operate(char **, int);
 	private:
 		// Logger	
 		OperatingSystemLogger *Logger;
@@ -19,4 +19,71 @@ class OperatingSystem {
 		std::map<std::string, int> CommandMap;
 };
 
+ struct CommandResponse{
+	bool Success;
+	std::string  ErrorMessage;
+	std::string	Output;
+};
+
+class Command {
+	public:
+		Command();
+		virtual CommandResponse* Process(char**);
+};
+
+class ListCommand : Command {
+	public:
+		ListCommand();	
+		CommandResponse* Process(char **);
+};
+
+class ChangeDirectoryCommand : Command {
+	public:
+		ChangeDirectoryCommand();	
+		CommandResponse* Process(char **);
+};
+
+class MakeDirectoryCommand : Command {
+	public:
+		MakeDirectoryCommand();
+		CommandResponse* Process(char **);
+};
+
+class TouchCommand : Command {
+	public:
+		TouchCommand();
+		CommandResponse* Process(char **);
+};
+
+class RemoveCommand : Command {
+	public:
+		RemoveCommand();
+		CommandResponse* Process(char **);
+};
+
+class OpenCommand : Command {
+	public:
+		OpenCommand();
+		CommandResponse* Process(char **);
+};
+
+class ProvideCommand : Command {
+	public:
+		ProvideCommand();
+		CommandResponse* Process(char **);
+};
+
+class MoveCommand : Command {
+	public:
+		MoveCommand();
+		CommandResponse* Process(char **);
+};
+
+class HelpCommand : Command {
+	public:
+		HelpCommand();
+		CommandResponse* Process(char **);
+};
+
 #endif
+
