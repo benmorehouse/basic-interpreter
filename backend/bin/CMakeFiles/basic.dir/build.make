@@ -57,9 +57,22 @@ include CMakeFiles/basic.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/basic.dir/flags.make
 
+CMakeFiles/basic.dir/src/directory.cpp.o: CMakeFiles/basic.dir/flags.make
+CMakeFiles/basic.dir/src/directory.cpp.o: ../src/directory.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/basic.dir/src/directory.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/basic.dir/src/directory.cpp.o -c /Users/benmorehouse/repositories/basicInterpreter/backend/src/directory.cpp
+
+CMakeFiles/basic.dir/src/directory.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/basic.dir/src/directory.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/benmorehouse/repositories/basicInterpreter/backend/src/directory.cpp > CMakeFiles/basic.dir/src/directory.cpp.i
+
+CMakeFiles/basic.dir/src/directory.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/basic.dir/src/directory.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/benmorehouse/repositories/basicInterpreter/backend/src/directory.cpp -o CMakeFiles/basic.dir/src/directory.cpp.s
+
 CMakeFiles/basic.dir/src/logger.cpp.o: CMakeFiles/basic.dir/flags.make
 CMakeFiles/basic.dir/src/logger.cpp.o: ../src/logger.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/basic.dir/src/logger.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/basic.dir/src/logger.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/basic.dir/src/logger.cpp.o -c /Users/benmorehouse/repositories/basicInterpreter/backend/src/logger.cpp
 
 CMakeFiles/basic.dir/src/logger.cpp.i: cmake_force
@@ -72,7 +85,7 @@ CMakeFiles/basic.dir/src/logger.cpp.s: cmake_force
 
 CMakeFiles/basic.dir/src/main.cpp.o: CMakeFiles/basic.dir/flags.make
 CMakeFiles/basic.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/basic.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/basic.dir/src/main.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/basic.dir/src/main.cpp.o -c /Users/benmorehouse/repositories/basicInterpreter/backend/src/main.cpp
 
 CMakeFiles/basic.dir/src/main.cpp.i: cmake_force
@@ -85,7 +98,7 @@ CMakeFiles/basic.dir/src/main.cpp.s: cmake_force
 
 CMakeFiles/basic.dir/src/os.cpp.o: CMakeFiles/basic.dir/flags.make
 CMakeFiles/basic.dir/src/os.cpp.o: ../src/os.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/basic.dir/src/os.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/basic.dir/src/os.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/basic.dir/src/os.cpp.o -c /Users/benmorehouse/repositories/basicInterpreter/backend/src/os.cpp
 
 CMakeFiles/basic.dir/src/os.cpp.i: cmake_force
@@ -98,6 +111,7 @@ CMakeFiles/basic.dir/src/os.cpp.s: cmake_force
 
 # Object files for target basic
 basic_OBJECTS = \
+"CMakeFiles/basic.dir/src/directory.cpp.o" \
 "CMakeFiles/basic.dir/src/logger.cpp.o" \
 "CMakeFiles/basic.dir/src/main.cpp.o" \
 "CMakeFiles/basic.dir/src/os.cpp.o"
@@ -105,12 +119,13 @@ basic_OBJECTS = \
 # External object files for target basic
 basic_EXTERNAL_OBJECTS =
 
+basic: CMakeFiles/basic.dir/src/directory.cpp.o
 basic: CMakeFiles/basic.dir/src/logger.cpp.o
 basic: CMakeFiles/basic.dir/src/main.cpp.o
 basic: CMakeFiles/basic.dir/src/os.cpp.o
 basic: CMakeFiles/basic.dir/build.make
 basic: CMakeFiles/basic.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable basic"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable basic"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/basic.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

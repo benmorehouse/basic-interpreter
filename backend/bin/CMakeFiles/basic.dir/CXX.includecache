@@ -6,17 +6,41 @@
 
 #IncludeRegexTransform: 
 
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/directory.h
+iostream
+-
+string
+-
+
 /Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
 string
 -
 
 /Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
+directory.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/directory.h
 logger.h
 /Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
 string
 -
 map
 -
+
+/Users/benmorehouse/repositories/basicInterpreter/backend/src/directory.cpp
+iostream
+-
+string
+-
+cstddef
+-
+../include/directory.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/directory.h
+
+/Users/benmorehouse/repositories/basicInterpreter/backend/src/main.cpp
+../include/logger.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+../include/os.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
 
 /Users/benmorehouse/repositories/basicInterpreter/backend/src/os.cpp
 ../include/os.h

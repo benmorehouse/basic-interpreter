@@ -1,6 +1,7 @@
 #ifndef OS_H
 #define OS_H
 
+#include "directory.h"
 #include "logger.h"
 #include <string>
 #include <map>
@@ -18,7 +19,7 @@ class OperatingSystem {
 		void InitializeCommandMap();
 		std::map<std::string, int> CommandMap;
 		// a map that for each name of the directory there corresponds a directory.
-		std::map<std::string, *Directory> Directories;
+		std::map<std::string, Directory*> Directories;
 };
 
  struct CommandResponse{
