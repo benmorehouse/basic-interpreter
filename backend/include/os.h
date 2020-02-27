@@ -17,6 +17,8 @@ class OperatingSystem {
 		// Functions and Commands for determining the initial Command	
 		void InitializeCommandMap();
 		std::map<std::string, int> CommandMap;
+		// a map that for each name of the directory there corresponds a directory.
+		std::map<std::string, *Directory> Directories;
 };
 
  struct CommandResponse{
@@ -28,12 +30,14 @@ class OperatingSystem {
 class Command {
 	public:
 		Command();
+		OperatingSystemLogger *Logger;
+		void HandleCommandOutput(CommandResponse*);
 		virtual CommandResponse* Process(char**);
 };
 
 class ListCommand : Command {
 	public:
-		ListCommand();	
+		ListCommand();
 		CommandResponse* Process(char **);
 };
 

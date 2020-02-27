@@ -100,23 +100,100 @@ Command::Command() {
 	// Nothing to do yet but feel like that could change.
 }
 
+CommandResponse* Command::Process(char **command) {
+	return nullptr;
+}
+	bool Success;
+	std::string  ErrorMessage;
+	std::string	Output;
+
+void Command::HandleCommandOutput(CommandResponse* resp) {
+	std::cout << "FINAL --------------------------------------" << std::endl;
+
+	if (!resp->Success) {
+		if (resp->ErrorMessage == "") {
+			this->Logger->Error("There was an error reported but lost");
+		} else {
+			this->Logger->Error(resp->ErrorMessage);
+		}
+		return;
+	}
+
+	this->Logger->Info(resp->Output);
+	return;
+}
+
+//###################### ls ########################
+
 ListCommand::ListCommand() : Command() {}
+
+CommandResponse* ListCommand::Process(char **command) {
+	// Here we need to iterate through all of the directories in the operating system.
+	return nullptr;
+}
+
+//###################### cd ########################
 
 ChangeDirectoryCommand::ChangeDirectoryCommand() : Command() {}
 
+CommandResponse* ChangeDirectoryCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### mkdir ########################
+
 MakeDirectoryCommand::MakeDirectoryCommand() : Command() {}
+
+CommandResponse* MakeDirectoryCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### touch ########################
 
 TouchCommand::TouchCommand() : Command() {}
 
+CommandResponse* TouchCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### rmdir #########################
+
 RemoveCommand::RemoveCommand() : Command() {}
+
+CommandResponse* RemoveCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### open  #########################
 
 OpenCommand::OpenCommand() : Command() {}
 
+CommandResponse* OpenCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### pwd #########################
+
 ProvideCommand::ProvideCommand() : Command() {}
+
+CommandResponse* ProvideCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### mv #########################
 
 MoveCommand::MoveCommand() : Command() {}
 
+CommandResponse* MoveCommand::Process(char **command) {
+	return nullptr;
+}
+
+//###################### help #########################
+
 HelpCommand::HelpCommand() : Command() {}
 
+CommandResponse* HelpCommand::Process(char **command) {
+	return nullptr;
+}
 
 

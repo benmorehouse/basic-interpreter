@@ -23,5 +23,6 @@ class OperatingSystemLogger : protected Logger {
 		void Debug(std::string);
 };
 
+
 #endif
 
