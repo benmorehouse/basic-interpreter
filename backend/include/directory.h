@@ -15,12 +15,13 @@ class Directory {
 	// should be an iterator for this.
 	public:
 		Directory(std::string name);
-		void SetName();
+		void SetName(std::string name);
 		std::string GetName();
 		bool IsDirectory();
 		File* GetFile();
 		Directory* GetDirectory();
 		void SetDirectory(Directory*);
+
 	private:
 		std::string Name;
 		bool IsDir;

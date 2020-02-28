@@ -22,7 +22,7 @@ class OperatingSystem {
 		std::map<std::string, Directory*> Directories;
 };
 
- struct CommandResponse{
+struct CommandResponse{
 	bool Success;
 	std::string  ErrorMessage;
 	std::string	Output;
@@ -76,6 +76,8 @@ class ProvideCommand : Command {
 	public:
 		ProvideCommand();
 		CommandResponse* Process(char **);
+	private: 
+		void ProvideHelper(Directory *);	
 };
 
 class MoveCommand : Command {
@@ -91,4 +93,3 @@ class HelpCommand : Command {
 };
 
 #endif
-

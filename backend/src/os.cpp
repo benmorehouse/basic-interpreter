@@ -180,6 +180,15 @@ CommandResponse* ProvideCommand::Process(char **command) {
 	return nullptr;
 }
 
+void ProvideHelper::ProvideHelper(Directory* dir) {
+	if (dir == nullptr) {
+		this->Logger->Error("Dir unexpectedly found as nil");
+		return
+	} else if (dir->IsRoot()) {
+		s
+	}	
+}
+
 //###################### mv #########################
 
 MoveCommand::MoveCommand() : Command() {}
