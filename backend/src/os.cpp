@@ -180,13 +180,15 @@ CommandResponse* ProvideCommand::Process(char **command) {
 	return nullptr;
 }
 
-void ProvideHelper::ProvideHelper(Directory* dir) {
+std::string ProvideCommand::ProvideHelper(Directory* dir) {
 	if (dir == nullptr) {
 		this->Logger->Error("Dir unexpectedly found as nil");
-		return
-	} else if (dir->IsRoot()) {
-		s
-	}	
+		return "";
+	} else if (dir->isHome()) {
+		return "/" + dir->getName();
+	} else {
+		return this->ProvideHelper(dir->getParent()) + dir->getName() + "/";
+	}
 }
 
 //###################### mv #########################

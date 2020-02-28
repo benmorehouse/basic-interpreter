@@ -14,19 +14,25 @@ struct File {
 class Directory {
 	// should be an iterator for this.
 	public:
-		Directory(std::string name);
-		void SetName(std::string name);
-		std::string GetName();
-		bool IsDirectory();
-		File* GetFile();
-		Directory* GetDirectory();
-		void SetDirectory(Directory*);
-
+		Directory(std::string name, Directory*);
+		void setName(std::string name);
+		std::string getName();
+		bool isHome();
+	
+		File* getFile();
+		
+		Directory* getDirectory();
+		bool isDirectory();
+		void setDirectory(Directory*);
+		Directory* getParent();
+		void setParent(Directory*);
 	private:
 		std::string Name;
 		bool IsDir;
 		File* file;
 		Directory* dir;
+		bool isHomeDir;
+		Directory* parent;
 };
 
 #endif

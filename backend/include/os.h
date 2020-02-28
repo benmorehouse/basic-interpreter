@@ -77,7 +77,7 @@ class ProvideCommand : Command {
 		ProvideCommand();
 		CommandResponse* Process(char **);
 	private: 
-		void ProvideHelper(Directory *);	
+		std::string ProvideHelper(Directory *);	
 };
 
 class MoveCommand : Command {

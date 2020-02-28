@@ -3,9 +3,19 @@
 #include <cstddef>        // std::size_t
 #include "../include/directory.h"
 
-Directory::Directory(std::string name) {
+Directory::Directory(std::string name, Directory* parent) {
 	this->Name = name;
 	this->IsDir = true; // postulate: assume it is a dir, prove otherwise
+	this->dir = nullptr;
+	this->file = nullptr;
+
+	if (parent == nullptr) {
+		this->isHomeDir = true;
+		return;	
+	}
+	
+	this->setParent(parent);
+	this->isHomeDir = false;
 
 	std::string fileExtension = " ";
 	std::string::iterator it = name.end();
@@ -22,41 +32,51 @@ Directory::Directory(std::string name) {
 		--it;	
 	}
 
-	this->dir = nullptr;
-	this->file = nullptr;
 }	
 
-void Directory::SetName(std::string name) {
+void Directory::setName(std::string name) {
 	this->Name = name;
 }
 
-std::string Directory::GetName() {
+void Directory::setParent(Directory* parent) {
+	if(parent != nullptr) {
+		this->parent = parent;
+	}
+}
+
+std::string Directory::getName() {
 	return this->Name;
 }
 
-bool Directory::IsDirectory() {
+bool Directory::isDirectory() {
 	return this->IsDir;
 }
 
-File* Directory::GetFile() {
-	if(!this->IsDirectory()) {
+File* Directory::getFile() {
+	if(!this->isDirectory()) {
 		return this->file;
 	}
 	return nullptr;
 }
 
-Directory* Directory::GetDirectory() {
-	if(this->IsDirectory()) {
+Directory* Directory::getDirectory() {
+	if(this->isDirectory()) {
 		return this->dir;
 	}
 	return nullptr;
 }
 
-void Directory::SetDirectory(Directory* dir) {
-	if (this->IsDirectory()) {
+Directory* Directory::getParent() {
+	return this->parent;
+}
+
+void Directory::setDirectory(Directory* dir) {
+	if (this->isDirectory()) {
 		this->dir = dir;	
 	}
 	return;
 }
 
-
+bool Directory::isHome() {
+	return this->isHomeDir;
+}
