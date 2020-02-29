@@ -69,13 +69,8 @@ void OperatingSystem::Operate(char **input, int len) {
 		}
 
 		case pwd: {
-			this->Logger->Info("We got to the pwd command");	
-			this->Logger->Info("We got to the pwd command");	
-			this->Logger->Info("We got to the pwd command");	
+			this->Logger->Info("Recieved a pwd");	
 			ProvideCommand *provideCommand = new ProvideCommand();
-			this->Logger->Info("We got to the pwd command");	
-			this->Logger->Info("We got to the pwd command");	
-			this->Logger->Info("We got to the pwd command");	
 			CommandResponse *cr = provideCommand->Process(nullptr);
 			delete provideCommand;
 		}
@@ -105,7 +100,11 @@ void OperatingSystem::InitializeCommandMap() {
 //###################### Commands ########################
 
 Command::Command() {
-	// Nothing to do yet but feel like that could change.
+	this->Logger = new OperatingSystemLogger();
+}
+
+Command::~Command() {
+	delete this->Logger;
 }
 
 CommandResponse* Command::Process(char **command) {
@@ -116,16 +115,16 @@ CommandResponse* Command::Process(char **command) {
 void Command::HandleCommandOutput(CommandResponse* resp) {
 	std::cout << "FINAL --------------------------------------" << std::endl;
 
-	if (!resp->Success) {
-		if (resp->ErrorMessage == "") {
+	if (!resp->success) {
+		if (resp->errorMessage == "") {
 			this->Logger->Error("There was an error reported but lost");
 		} else {
-			this->Logger->Error(resp->ErrorMessage);
+			this->Logger->Error(resp->errorMessage);
 		}
 		return;
 	}
 
-	this->Logger->Info(resp->Output);
+	this->Logger->Info(resp->output);
 	return;
 }
 
@@ -181,19 +180,32 @@ CommandResponse* OpenCommand::Process(char **command) {
 //###################### pwd #########################
 
 ProvideCommand::ProvideCommand() : Command() {
-	this->Logger->Info("initialized a providing command");
+	this->Logger->Info("initialized a provide working directory command command");
 }
 
 CommandResponse* ProvideCommand::Process(char **command) {
 	// This needs to be able to get access to the current 
 	// directory passed in from the operating system.
+	
+
+	// Just some things we need for testingk
 	this->Logger->Info("we got to the root of the pwd command");
 	Directory* home = new Directory("usrs", nullptr);
 	Directory* code = new Directory("code", home);
+	// Just some things we need for testingk
+	
 	std::string pwdResult = this->ProvideHelper(code);
-	this->Logger->Info("We got the end of the pwd command");
-	this->Logger->Info(pwdResult);
-	return nullptr;
+	CommandResponse* cr = new CommandResponse();
+
+	if (pwdResult == "") {
+		cr->success = false;
+		cr->errorMessage = "provide working directory command not functioning as expected...";
+	} else {
+		cr->success = true;
+		cr->output = pwdResult;
+	}
+
+	return cr;
 }
 
 std::string ProvideCommand::ProvideHelper(Directory* dir) {
@@ -201,7 +213,7 @@ std::string ProvideCommand::ProvideHelper(Directory* dir) {
 		this->Logger->Error("Dir unexpectedly found as nil");
 		return "";
 	} else if (dir->isHome()) {
-		return "/" + dir->getName();
+		return "/" + dir->getName() + "/";
 	} else {
 		std::string child = this->ProvideHelper(dir->getParent());
 		if (child != "") {

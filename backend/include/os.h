@@ -23,18 +23,20 @@ class OperatingSystem {
 };
 
 struct CommandResponse{
-	bool Success;
-	std::string  ErrorMessage;
-	std::string	Output;
+	bool success;
+	std::string errorMessage;
+	std::string output;
 };
 
 class Command {
 	public:
 		Command();
+		~Command();
 		OperatingSystemLogger *Logger;
 		// HandleCommandOutput must be called by every class at some point!
 		void HandleCommandOutput(CommandResponse*);
 		virtual CommandResponse* Process(char**);
+
 };
 
 class ListCommand : Command {
