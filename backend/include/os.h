@@ -19,7 +19,9 @@ class OperatingSystem {
 		void InitializeCommandMap();
 		std::map<std::string, int> CommandMap;
 		// a map that for each name of the directory there corresponds a directory.
+		// i think this needs to be moved to the directories for each directory
 		std::map<std::string, Directory*> Directories;
+		Directory* currentDirectory;
 };
 
 struct CommandResponse{

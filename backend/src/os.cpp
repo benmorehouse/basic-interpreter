@@ -183,18 +183,9 @@ ProvideCommand::ProvideCommand() : Command() {
 	this->Logger->Info("initialized a provide working directory command command");
 }
 
-CommandResponse* ProvideCommand::Process(char **command) {
-	// This needs to be able to get access to the current 
-	// directory passed in from the operating system.
-	
-
-	// Just some things we need for testingk
+CommandResponse* ProvideCommand::Process(Directory* currentDirectory) {
 	this->Logger->Info("we got to the root of the pwd command");
-	Directory* home = new Directory("usrs", nullptr);
-	Directory* code = new Directory("code", home);
-	// Just some things we need for testingk
-	
-	std::string pwdResult = this->ProvideHelper(code);
+	std::string pwdResult = this->ProvideHelper(currentDirectory);
 	CommandResponse* cr = new CommandResponse();
 
 	if (pwdResult == "") {
