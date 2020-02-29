@@ -14,6 +14,7 @@ struct File {
 class Directory {
 	// should be an iterator for this.
 	public:
+		// Directory(name, <parent of this directory>)
 		Directory(std::string name, Directory*);
 		void setName(std::string name);
 		std::string getName();

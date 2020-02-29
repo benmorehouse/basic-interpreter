@@ -69,7 +69,15 @@ void OperatingSystem::Operate(char **input, int len) {
 		}
 
 		case pwd: {
+			this->Logger->Info("We got to the pwd command");	
+			this->Logger->Info("We got to the pwd command");	
+			this->Logger->Info("We got to the pwd command");	
 			ProvideCommand *provideCommand = new ProvideCommand();
+			this->Logger->Info("We got to the pwd command");	
+			this->Logger->Info("We got to the pwd command");	
+			this->Logger->Info("We got to the pwd command");	
+			CommandResponse *cr = provideCommand->Process(nullptr);
+			delete provideCommand;
 		}
 
 		case mv: {
@@ -101,11 +109,9 @@ Command::Command() {
 }
 
 CommandResponse* Command::Process(char **command) {
+	this->Logger->Error("wrong process fetched");
 	return nullptr;
 }
-	bool Success;
-	std::string  ErrorMessage;
-	std::string	Output;
 
 void Command::HandleCommandOutput(CommandResponse* resp) {
 	std::cout << "FINAL --------------------------------------" << std::endl;
@@ -174,9 +180,19 @@ CommandResponse* OpenCommand::Process(char **command) {
 
 //###################### pwd #########################
 
-ProvideCommand::ProvideCommand() : Command() {}
+ProvideCommand::ProvideCommand() : Command() {
+	this->Logger->Info("initialized a providing command");
+}
 
 CommandResponse* ProvideCommand::Process(char **command) {
+	// This needs to be able to get access to the current 
+	// directory passed in from the operating system.
+	this->Logger->Info("we got to the root of the pwd command");
+	Directory* home = new Directory("usrs", nullptr);
+	Directory* code = new Directory("code", home);
+	std::string pwdResult = this->ProvideHelper(code);
+	this->Logger->Info("We got the end of the pwd command");
+	this->Logger->Info(pwdResult);
 	return nullptr;
 }
 
@@ -187,7 +203,12 @@ std::string ProvideCommand::ProvideHelper(Directory* dir) {
 	} else if (dir->isHome()) {
 		return "/" + dir->getName();
 	} else {
-		return this->ProvideHelper(dir->getParent()) + dir->getName() + "/";
+		std::string child = this->ProvideHelper(dir->getParent());
+		if (child != "") {
+			return child + dir->getName() + "/";
+		} else {
+			return child;
+		}
 	}
 }
 

@@ -45,13 +45,14 @@ void OperatingSystemLogger::Error(std::string err) {
 }
 
 void OperatingSystemLogger::Warning(std::string err) {
-	std::cout << OS << YELLOW << "ERROR: " << err << RESET << std::endl;
+	std::cout << OS << YELLOW << "WARNING: " << err << RESET << std::endl;
 }
 
 void OperatingSystemLogger::Info(std::string err) {
-	std::cout << OS << BLUE << "ERROR: " << err << RESET << std::endl;
+	std::cout << OS << BLUE << "INFO: " << err << RESET << std::endl;
 }
 
 void OperatingSystemLogger::Debug(std::string err) {
-	std::cout << OS << CYAN << "ERROR: " << err << RESET << std::endl;
+	std::cout << OS << CYAN << "DEBUG: " << err << RESET << std::endl;
 }
+

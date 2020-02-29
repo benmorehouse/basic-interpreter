@@ -32,6 +32,7 @@ class Command {
 	public:
 		Command();
 		OperatingSystemLogger *Logger;
+		// HandleCommandOutput must be called by every class at some point!
 		void HandleCommandOutput(CommandResponse*);
 		virtual CommandResponse* Process(char**);
 };
