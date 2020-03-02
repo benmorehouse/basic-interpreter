@@ -70,9 +70,9 @@ void OperatingSystem::Operate(char **input, int len) {
 
 		case cd: {
 			ChangeDirectoryCommand *changeDirectoryCommand = new ChangeDirectoryCommand();
-			CommandResponse* response = changeDirectoryCommand(this->currentDirectory);// hoping to pass in this address and have it change the address value.
+			CommandResponse* response = changeDirectoryCommand->process(this->currentDirectory);// hoping to pass in this address and have it change the address value.
 			HandleCommandOutput(response);
-			delete listCommand;
+			delete changeDirectoryCommand;
 
 			// Then parse through and get the list of things.
 		}
@@ -170,7 +170,31 @@ CommandResponse* ListCommand::process(Directory* dir) {
 
 ChangeDirectoryCommand::ChangeDirectoryCommand() : Command() {}
 
-CommandResponse* ChangeDirectoryCommand::process(Directory* dir) {
+CommandResponse* ChangeDirectoryCommand::process(Directory* dir) { // meaning we are tracing back up to home directory
+	CommandResponse* response;
+	if (dir == nullptr) {
+		response->success = false;
+		response->errorMessage = "Passed in a nil directory.";
+		return response;
+	}
+
+	// iterate back up to things.
+	return nullptr;
+}
+
+CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string newDir) {
+	CommandResponse* response;
+	if (dir == nullptr) {
+		response->success = false;
+		response->errorMessage = "Passed in a nil directory.";
+		return response;
+	} else if (newDir == "") {
+		response->success = false;
+		response->errorMessage = "Passed in a nil directory name.";
+		return response;
+	}
+
+	// now we need to go in and get the 
 	return nullptr;
 }
 
