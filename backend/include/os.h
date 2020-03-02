@@ -20,7 +20,6 @@ class OperatingSystem {
 		std::map<std::string, int> CommandMap;
 		// a map that for each name of the directory there corresponds a directory.
 		// i think this needs to be moved to the directories for each directory
-		std::map<std::string, Directory*> Directories;
 		Directory* currentDirectory;
 };
 
@@ -35,52 +34,50 @@ class Command {
 		Command();
 		~Command();
 		OperatingSystemLogger *Logger;
-		// HandleCommandOutput must be called by every class at some point!
-		void HandleCommandOutput(CommandResponse*);
-		virtual CommandResponse* Process(char**);
+		virtual CommandResponse* process(Directory*);
 
 };
 
 class ListCommand : Command {
 	public:
 		ListCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class ChangeDirectoryCommand : Command {
 	public:
 		ChangeDirectoryCommand();	
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class MakeDirectoryCommand : Command {
 	public:
 		MakeDirectoryCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class TouchCommand : Command {
 	public:
 		TouchCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class RemoveCommand : Command {
 	public:
 		RemoveCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class OpenCommand : Command {
 	public:
 		OpenCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class ProvideCommand : Command {
 	public:
 		ProvideCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 	private: 
 		std::string ProvideHelper(Directory *);	
 };
@@ -88,13 +85,13 @@ class ProvideCommand : Command {
 class MoveCommand : Command {
 	public:
 		MoveCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 class HelpCommand : Command {
 	public:
 		HelpCommand();
-		CommandResponse* Process(char **);
+		CommandResponse* process(Directory*);
 };
 
 #endif

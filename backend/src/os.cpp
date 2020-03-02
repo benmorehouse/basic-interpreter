@@ -26,6 +26,24 @@ OperatingSystem::~OperatingSystem() {
 	delete this->Logger;
 }
 
+void HandleCommandOutput(CommandResponse* resp) {
+	std::cout << "FINAL --------------------------------------" << std::endl;
+	
+	OperatingSystemLogger* Logger = new OperatingSystemLogger();
+
+	if (!resp->success) {
+		if (resp->errorMessage == "") {
+			Logger->Error("There was an error reported but lost");
+		} else {
+			Logger->Error(resp->errorMessage);
+		}
+		return;
+	}
+
+	Logger->Info(resp->output);
+	return;
+}
+
 // OperatingSystem should take in the arguments count and the
 // argument vector and switch based on the argument.
 void OperatingSystem::Operate(char **input, int len) {
@@ -43,12 +61,19 @@ void OperatingSystem::Operate(char **input, int len) {
 	    	}
 		   
 		case ls: {
-			ListCommand *listCommand = new ListCommand();	
+			ListCommand *listCommand = new ListCommand();
+			CommandResponse* response = listCommand->process(this->currentDirectory);
+			HandleCommandOutput(response);
+			delete listCommand;
 			// Then show the list of things
 		}
 
 		case cd: {
-			ChangeDirectoryCommand *changeDirectoryCommand = new ChangeDirectoryCommand();	
+			ChangeDirectoryCommand *changeDirectoryCommand = new ChangeDirectoryCommand();
+			CommandResponse* response = changeDirectoryCommand(this->currentDirectory);// hoping to pass in this address and have it change the address value.
+			HandleCommandOutput(response);
+			delete listCommand;
+
 			// Then parse through and get the list of things.
 		}
 
@@ -70,8 +95,9 @@ void OperatingSystem::Operate(char **input, int len) {
 
 		case pwd: {
 			this->Logger->Info("Recieved a pwd");	
-			ProvideCommand *provideCommand = new ProvideCommand();
-			CommandResponse *cr = provideCommand->Process(nullptr);
+			ProvideCommand* provideCommand = new ProvideCommand();
+			CommandResponse* response = provideCommand->process(nullptr);
+			HandleCommandOutput(response);
 			delete provideCommand;
 		}
 
@@ -107,41 +133,44 @@ Command::~Command() {
 	delete this->Logger;
 }
 
-CommandResponse* Command::Process(char **command) {
+CommandResponse* Command::process(Directory *dir) {
 	this->Logger->Error("wrong process fetched");
 	return nullptr;
-}
-
-void Command::HandleCommandOutput(CommandResponse* resp) {
-	std::cout << "FINAL --------------------------------------" << std::endl;
-
-	if (!resp->success) {
-		if (resp->errorMessage == "") {
-			this->Logger->Error("There was an error reported but lost");
-		} else {
-			this->Logger->Error(resp->errorMessage);
-		}
-		return;
-	}
-
-	this->Logger->Info(resp->output);
-	return;
 }
 
 //###################### ls ########################
 
 ListCommand::ListCommand() : Command() {}
 
-CommandResponse* ListCommand::Process(char **command) {
+CommandResponse* ListCommand::process(Directory* dir) {
 	// Here we need to iterate through all of the directories in the operating system.
-	return nullptr;
+	CommandResponse* response;
+	if (dir == nullptr) {
+		response->success = false;
+		response->errorMessage = "Passed in a nil directory.";
+		return response;
+	} 
+	
+	std::vector<std::string>* listOfDirectories = dir->getAllSubAsName();	
+	std::vector<std::string>::iterator it;
+	std::string directories = "";
+
+	for(it = listOfDirectories->begin(); it != listOfDirectories->end(); ++it) {
+		if(*it != "") {
+			directories += *it + "\n";
+		}
+	}
+	
+	response->success = true;
+	response->output = directories;
+	return response;
 }
 
 //###################### cd ########################
 
 ChangeDirectoryCommand::ChangeDirectoryCommand() : Command() {}
 
-CommandResponse* ChangeDirectoryCommand::Process(char **command) {
+CommandResponse* ChangeDirectoryCommand::process(Directory* dir) {
 	return nullptr;
 }
 
@@ -149,7 +178,7 @@ CommandResponse* ChangeDirectoryCommand::Process(char **command) {
 
 MakeDirectoryCommand::MakeDirectoryCommand() : Command() {}
 
-CommandResponse* MakeDirectoryCommand::Process(char **command) {
+CommandResponse* MakeDirectoryCommand::process(Directory* dir) {
 	return nullptr;
 }
 
@@ -157,7 +186,7 @@ CommandResponse* MakeDirectoryCommand::Process(char **command) {
 
 TouchCommand::TouchCommand() : Command() {}
 
-CommandResponse* TouchCommand::Process(char **command) {
+CommandResponse* TouchCommand::process(Directory* dir) {
 	return nullptr;
 }
 
@@ -165,7 +194,7 @@ CommandResponse* TouchCommand::Process(char **command) {
 
 RemoveCommand::RemoveCommand() : Command() {}
 
-CommandResponse* RemoveCommand::Process(char **command) {
+CommandResponse* RemoveCommand::process(Directory* dir) {
 	return nullptr;
 }
 
@@ -173,7 +202,7 @@ CommandResponse* RemoveCommand::Process(char **command) {
 
 OpenCommand::OpenCommand() : Command() {}
 
-CommandResponse* OpenCommand::Process(char **command) {
+CommandResponse* OpenCommand::process(Directory* dir) {
 	return nullptr;
 }
 
@@ -183,10 +212,15 @@ ProvideCommand::ProvideCommand() : Command() {
 	this->Logger->Info("initialized a provide working directory command command");
 }
 
-CommandResponse* ProvideCommand::Process(Directory* currentDirectory) {
+CommandResponse* ProvideCommand::process(Directory* currentDirectory) {
 	this->Logger->Info("we got to the root of the pwd command");
-	std::string pwdResult = this->ProvideHelper(currentDirectory);
 	CommandResponse* cr = new CommandResponse();
+	if (currentDirectory == nullptr) {
+		cr->success = false;
+		cr->errorMessage = "Directory found as nil";	
+	}
+
+	std::string pwdResult = this->ProvideHelper(currentDirectory);
 
 	if (pwdResult == "") {
 		cr->success = false;
@@ -219,7 +253,7 @@ std::string ProvideCommand::ProvideHelper(Directory* dir) {
 
 MoveCommand::MoveCommand() : Command() {}
 
-CommandResponse* MoveCommand::Process(char **command) {
+CommandResponse* MoveCommand::process(Directory* dir) {
 	return nullptr;
 }
 
@@ -227,7 +261,7 @@ CommandResponse* MoveCommand::Process(char **command) {
 
 HelpCommand::HelpCommand() : Command() {}
 
-CommandResponse* HelpCommand::Process(char **command) {
+CommandResponse* HelpCommand::process(Directory* dir) {
 	return nullptr;
 }
 

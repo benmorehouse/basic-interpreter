@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <map>
+#include <vector>
 
 struct File {
 	std::string name;
@@ -15,25 +17,32 @@ class Directory {
 	// should be an iterator for this.
 	public:
 		// Directory(name, <parent of this directory>)
+		// IF file does not have dot it is considered a file.
 		Directory(std::string name, Directory*);
 		void setName(std::string name);
 		std::string getName();
 		bool isHome();
 	
-		File* getFile();
+		File* getFile(std::string);
+		Directory* getDirectory(std::string);
+		std::vector<std::string>* getAllSubAsName();
 		
-		Directory* getDirectory();
 		bool isDirectory();
-		void setDirectory(Directory*);
+		void addDirectory(Directory*);
+		void addFile(Directory*);
+		
 		Directory* getParent();
 		void setParent(Directory*);
 	private:
 		std::string Name;
+		// map corresponding to each subdirectory or file within the directory.
+		std::map<std::string, Directory*> directories;
 		bool IsDir;
 		File* file;
-		Directory* dir;
 		bool isHomeDir;
 		Directory* parent;
+		// Function used as helper for public getters.
+		Directory* getElementFromDirectoryMap(std::string);
 };
 
 #endif
