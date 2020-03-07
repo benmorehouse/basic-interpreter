@@ -1,3 +1,6 @@
+#ifndef COMPILER_H
+#define COMPILER_H
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -90,3 +93,4 @@ private:
 	int jumpToCommand(int);
 };	
 
+#endif

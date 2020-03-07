@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/basic.dir/src/command.cpp.o"
+  "CMakeFiles/basic.dir/src/compiler.cpp.o"
   "CMakeFiles/basic.dir/src/directory.cpp.o"
   "CMakeFiles/basic.dir/src/logger.cpp.o"
   "CMakeFiles/basic.dir/src/main.cpp.o"

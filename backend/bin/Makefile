@@ -123,6 +123,60 @@ basic/fast:
 	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/build
 .PHONY : basic/fast
 
+src/command.o: src/command.cpp.o
+
+.PHONY : src/command.o
+
+# target to build an object file
+src/command.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/command.cpp.o
+.PHONY : src/command.cpp.o
+
+src/command.i: src/command.cpp.i
+
+.PHONY : src/command.i
+
+# target to preprocess a source file
+src/command.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/command.cpp.i
+.PHONY : src/command.cpp.i
+
+src/command.s: src/command.cpp.s
+
+.PHONY : src/command.s
+
+# target to generate assembly for a file
+src/command.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/command.cpp.s
+.PHONY : src/command.cpp.s
+
+src/compiler.o: src/compiler.cpp.o
+
+.PHONY : src/compiler.o
+
+# target to build an object file
+src/compiler.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/compiler.cpp.o
+.PHONY : src/compiler.cpp.o
+
+src/compiler.i: src/compiler.cpp.i
+
+.PHONY : src/compiler.i
+
+# target to preprocess a source file
+src/compiler.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/compiler.cpp.i
+.PHONY : src/compiler.cpp.i
+
+src/compiler.s: src/compiler.cpp.s
+
+.PHONY : src/compiler.s
+
+# target to generate assembly for a file
+src/compiler.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/compiler.cpp.s
+.PHONY : src/compiler.cpp.s
+
 src/directory.o: src/directory.cpp.o
 
 .PHONY : src/directory.o
@@ -240,6 +294,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... basic"
+	@echo "... src/command.o"
+	@echo "... src/command.i"
+	@echo "... src/command.s"
+	@echo "... src/compiler.o"
+	@echo "... src/compiler.i"
+	@echo "... src/compiler.s"
 	@echo "... src/directory.o"
 	@echo "... src/directory.i"
 	@echo "... src/directory.s"
