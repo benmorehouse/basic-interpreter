@@ -30,7 +30,10 @@ class Directory {
 		bool isDirectory();
 		void addDirectory(Directory*);
 		void addFile(Directory*);
-		
+
+		void removeDirectory(Directory*);
+		void removeFile(Directory*);
+
 		Directory* getParent();
 		void setParent(Directory*);
 	private:

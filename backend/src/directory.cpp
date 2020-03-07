@@ -75,7 +75,9 @@ Directory* Directory::getParent() {
 //############################ STANDARD SETTERS ######################################
 
 void Directory::addDirectory(Directory* dir) {
-	if (!dir->isDirectory()) {
+	if (dir == nullptr) {
+		return;
+	} else if (!dir->isDirectory()) {	
 		return;		
 	} else if (dir->getName() == "") {
 		return;	
@@ -85,13 +87,41 @@ void Directory::addDirectory(Directory* dir) {
 }
 
 void Directory::addFile(Directory* dir) {
-	if (dir->isDirectory()) {
+	if (dir == nullptr) {
+		return;
+	} else if (dir->isDirectory()) {
 		return;		
 	} else if (dir->getName() == "") {
 		return;	
 	}
 	
 	this->directories[dir->getName()] = dir;
+}
+
+void Directory::removeFile(Directory* dir) {
+	if (dir == nullptr) {
+		return;
+	} else if (dir->isDirectory()) {
+		return;		
+	} else if (dir->getName() == "") {
+		return;	
+	}
+
+	Directory* removeThisDir = this->directories[dir->getName()] = nullptr;
+	delete removeThisDir;
+}
+
+void Directory::removeDirectory(Directory* dir) {
+	if (dir == nullptr) {
+		return;
+	} else if (dir->isDirectory()) {
+		return;		
+	} else if (dir->getName() == "") {
+		return;	
+	}
+
+	Directory* removeThisDir = this->directories[dir->getName()] = nullptr;
+	delete removeThisDir;
 }
 
 void Directory::setName(std::string name) {
@@ -123,7 +153,9 @@ std::vector<std::string>* Directory::getAllSubAsName() {
 		Directory* dir = it->second; 
 		names.push_back(dir->getName());
 	}
-
+	
+	// this returns a warning... why?
+	// warning: address of stack memory associated with local variable 'names' returned
 	return &names;
 }
 

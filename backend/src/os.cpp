@@ -70,15 +70,32 @@ void OperatingSystem::Operate(char **input, int len) {
 
 		case cd: {
 			ChangeDirectoryCommand *changeDirectoryCommand = new ChangeDirectoryCommand();
-			CommandResponse* response = changeDirectoryCommand->process(this->currentDirectory, "");// hoping to pass in this address and have it change the address value.
+			
+			CommandResponse* response;
+			if (len == 2) {
+				response = changeDirectoryCommand->process(this->currentDirectory, "");// hoping to pass in this address and have it change the address value.
+			} else {
+				response = changeDirectoryCommand->process(this->currentDirectory, input[2]);
+			}
 			HandleCommandOutput(response);
 			delete changeDirectoryCommand;
-
-			// Then parse through and get the list of things.
 		}
 
 		case mkdir: {
 			MakeDirectoryCommand *makeDirectoryCommand = new MakeDirectoryCommand();
+			CommandResponse* response;
+			if (len == 2) {
+				this->Logger->Error("User asked to make a directory but didn't give us the name of the directory!?");
+				this->Logger->Error("mdkir [<name>] ...");
+				response->success = false;
+				response->errorMessage = "mdkir [<name>] ...";
+				return;
+			} else {
+				response = makeDirectoryCommand->process(this->currentDirectory, input[2]);
+				return;
+			}
+
+			delete makeDirectoryCommand;
 	    	}
 
 		case touch: {
@@ -176,13 +193,17 @@ CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string new
 		response->success = false;
 		response->errorMessage = "Passed in a nil directory.";
 		return response;
-	} else if (newDir == "") {
-		response->success = false;
-		response->errorMessage = "Passed in a nil directory name.";
-		return response;
 	} else if (!dir->isDirectory()) {
 		response->success = false;
 		response->errorMessage = "This is apparently of type file?";
+		return response;
+	}
+
+	if (newDir == "") {
+		// Then trickle up the tree to the home directory.
+		this->trickleUpToHome(dir);
+		response->success = true;
+		response->output = "gone home!";
 		return response;
 	}
 
@@ -200,28 +221,120 @@ CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string new
 	return response;
 }
 
+void ChangeDirectoryCommand::trickleUpToHome(Directory* dir) {
+	if (dir == nullptr) {
+		this->Logger->Error("The directory was found nil whilst we were going home");
+		this->Logger->Error("Help i am experiencing homelessness :(");
+		return;
+	} else {
+		while (!dir->isHome()) {
+			dir = dir->getParent();
+			if (dir == nullptr) {
+				this->Logger->Error("The directory was found nil whilst we were going home");
+				this->Logger->Error("Help i am experiencing homelessness :(");
+				return;
+			}
+		}
+	}
+}
+
 //###################### mkdir ########################
 
 MakeDirectoryCommand::MakeDirectoryCommand() : Command() {}
 
-CommandResponse* MakeDirectoryCommand::process(Directory* dir) {
-	return nullptr;
+CommandResponse* MakeDirectoryCommand::process(Directory* dir, std::string newDir) {
+	
+	CommandResponse* response;
+	if (dir == nullptr) {
+		response->success = false;
+		response->errorMessage = "this doesnt seem to be a directory.";
+		return response;
+		return nullptr;
+	} else if (newDir == "") {
+		response->success = false;
+		response->errorMessage = "Passed in a new directory name that is blank!";
+		return response;
+	}
+	
+	Directory* newDirectory = new Directory(newDir, dir);
+	if (!newDirectory->isDirectory()) {
+		response->success = false;
+		response->errorMessage = "This is a file not a directory!";
+		delete newDirectory;
+		return response;	
+	}
+	
+	dir->addDirectory(newDirectory);
+	response->success = true;
+	return response;
 }
 
 //###################### touch ########################
 
 TouchCommand::TouchCommand() : Command() {}
 
-CommandResponse* TouchCommand::process(Directory* dir) {
-	return nullptr;
+CommandResponse* TouchCommand::process(Directory* dir, std::string newFile) {
+	CommandResponse* response;
+	if (dir == nullptr) {
+		response->success = false;
+		response->errorMessage = "this doesnt seem to be a directory.";
+		return response;
+		return nullptr;
+	} else if (newFile == "") {
+		response->success = false;
+		response->errorMessage = "Passed in a new directory name that is blank!";
+		return response;
+	}
+	
+	Directory* newDirectory = new Directory(newFile, dir);
+	if (!newDirectory->isDirectory()) {
+		response->success = false;
+		response->errorMessage = "This is a file not a directory!";
+		delete newDirectory;
+		return response;	
+	}
+
+	dir->addDirectory(newDirectory);
+	response->success = true;
+	return response;
 }
 
 //###################### rmdir #########################
 
 RemoveCommand::RemoveCommand() : Command() {}
 
-CommandResponse* RemoveCommand::process(Directory* dir) {
-	return nullptr;
+CommandResponse* RemoveCommand::process(Directory* dir, std::string removeFile) {
+	CommandResponse* response;
+	if (dir == nullptr) {
+		response->success = false;
+		response->errorMessage = "this doesnt seem to be a directory.";
+		return response;
+		return nullptr;
+	} else if (removeFile == "") {
+		response->success = false;
+		response->errorMessage = "Passed in a new directory name that is blank!";
+		return response;
+	} 
+
+	Directory *checkIfExists = dir->getDirectory(removeFile);
+	if (checkIfExists == nullptr) {
+		response->success = false;
+		response->errorMessage = "Tried to delete a directory that wasnt there.";
+		return response;
+	}
+	
+	if (checkIfExists->isDirectory()) {
+		dir->removeDirectory(checkIfExists);
+		response->success = true;
+		return response;
+	} else {
+		dir->removeFile(checkIfExists);
+		response->success = true;
+		return response;
+	}
+	
+	response->success = true;
+	return response;
 }
 
 //###################### open  #########################
@@ -276,6 +389,7 @@ std::string ProvideCommand::ProvideHelper(Directory* dir) {
 }
 
 //###################### mv #########################
+// Should be able to move a file based on where it is.
 
 MoveCommand::MoveCommand() : Command() {}
 

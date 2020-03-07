@@ -48,24 +48,26 @@ class ChangeDirectoryCommand : Command {
 	public:
 		ChangeDirectoryCommand();	
 		CommandResponse* process(Directory*, std::string);
+	private:
+		void trickleUpToHome(Directory*);
 };
 
 class MakeDirectoryCommand : Command {
 	public:
 		MakeDirectoryCommand();
-		CommandResponse* process(Directory*);
+		CommandResponse* process(Directory*, std::string);
 };
 
 class TouchCommand : Command {
 	public:
 		TouchCommand();
-		CommandResponse* process(Directory*);
+		CommandResponse* process(Directory*, std::string);
 };
 
 class RemoveCommand : Command {
 	public:
 		RemoveCommand();
-		CommandResponse* process(Directory*);
+		CommandResponse* process(Directory*, std::string);
 };
 
 class OpenCommand : Command {
