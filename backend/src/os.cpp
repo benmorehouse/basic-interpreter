@@ -70,7 +70,7 @@ void OperatingSystem::Operate(char **input, int len) {
 
 		case cd: {
 			ChangeDirectoryCommand *changeDirectoryCommand = new ChangeDirectoryCommand();
-			CommandResponse* response = changeDirectoryCommand->process(this->currentDirectory);// hoping to pass in this address and have it change the address value.
+			CommandResponse* response = changeDirectoryCommand->process(this->currentDirectory, "");// hoping to pass in this address and have it change the address value.
 			HandleCommandOutput(response);
 			delete changeDirectoryCommand;
 
@@ -119,7 +119,7 @@ void OperatingSystem::InitializeCommandMap() {
 	this->CommandMap.insert(std::pair<std::string, int>("rm", rm));
 	this->CommandMap.insert(std::pair<std::string, int>("open", open));
 	this->CommandMap.insert(std::pair<std::string, int>("pwd", pwd));
-	this->CommandMap.insert(std::pair<std::string, int>("help", pwd));
+	this->CommandMap.insert(std::pair<std::string, int>("help", help));
 }
 
 //########################################################
@@ -170,18 +170,6 @@ CommandResponse* ListCommand::process(Directory* dir) {
 
 ChangeDirectoryCommand::ChangeDirectoryCommand() : Command() {}
 
-CommandResponse* ChangeDirectoryCommand::process(Directory* dir) { // meaning we are tracing back up to home directory
-	CommandResponse* response;
-	if (dir == nullptr) {
-		response->success = false;
-		response->errorMessage = "Passed in a nil directory.";
-		return response;
-	}
-
-	// iterate back up to things.
-	return nullptr;
-}
-
 CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string newDir) {
 	CommandResponse* response;
 	if (dir == nullptr) {
@@ -192,10 +180,24 @@ CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string new
 		response->success = false;
 		response->errorMessage = "Passed in a nil directory name.";
 		return response;
+	} else if (!dir->isDirectory()) {
+		response->success = false;
+		response->errorMessage = "This is apparently of type file?";
+		return response;
 	}
 
-	// now we need to go in and get the 
-	return nullptr;
+	Directory* changeToThisDirectory = dir->getDirectory(newDir);
+	if (changeToThisDirectory == nullptr) {
+		response->success = false;
+		response->errorMessage = "This is apparently of type file?";
+		return response;
+	}
+
+	// Now we need to go in and make sure that the directory actually exists in order to switch to it!
+	// Also must make sure that it is a directory before we change to it.
+	dir = changeToThisDirectory;
+	response->success = true;
+	return response;
 }
 
 //###################### mkdir ########################

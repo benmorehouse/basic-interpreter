@@ -16,17 +16,29 @@ map
 vector
 -
 
-/Users/benmorehouse/repositories/basicInterpreter/backend/src/directory.cpp
-iostream
--
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
 string
 -
-vector
+
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
+directory.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/directory.h
+logger.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+string
 -
 map
 -
-cstddef
+
+/Users/benmorehouse/repositories/basicInterpreter/backend/src/os.cpp
+../include/os.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/os.h
+../include/logger.h
+/Users/benmorehouse/repositories/basicInterpreter/backend/include/logger.h
+string
 -
-../include/directory.h
-/Users/benmorehouse/repositories/basicInterpreter/backend/include/directory.h
+iostream
+-
+map
+-
 

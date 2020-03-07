@@ -47,7 +47,7 @@ class ListCommand : Command {
 class ChangeDirectoryCommand : Command {
 	public:
 		ChangeDirectoryCommand();	
-		CommandResponse* process(Directory*);
+		CommandResponse* process(Directory*, std::string);
 };
 
 class MakeDirectoryCommand : Command {
