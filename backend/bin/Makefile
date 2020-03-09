@@ -123,6 +123,60 @@ basic/fast:
 	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/build
 .PHONY : basic/fast
 
+src/arithmetic.o: src/arithmetic.cpp.o
+
+.PHONY : src/arithmetic.o
+
+# target to build an object file
+src/arithmetic.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/arithmetic.cpp.o
+.PHONY : src/arithmetic.cpp.o
+
+src/arithmetic.i: src/arithmetic.cpp.i
+
+.PHONY : src/arithmetic.i
+
+# target to preprocess a source file
+src/arithmetic.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/arithmetic.cpp.i
+.PHONY : src/arithmetic.cpp.i
+
+src/arithmetic.s: src/arithmetic.cpp.s
+
+.PHONY : src/arithmetic.s
+
+# target to generate assembly for a file
+src/arithmetic.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/arithmetic.cpp.s
+.PHONY : src/arithmetic.cpp.s
+
+src/boolean.o: src/boolean.cpp.o
+
+.PHONY : src/boolean.o
+
+# target to build an object file
+src/boolean.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/boolean.cpp.o
+.PHONY : src/boolean.cpp.o
+
+src/boolean.i: src/boolean.cpp.i
+
+.PHONY : src/boolean.i
+
+# target to preprocess a source file
+src/boolean.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/boolean.cpp.i
+.PHONY : src/boolean.cpp.i
+
+src/boolean.s: src/boolean.cpp.s
+
+.PHONY : src/boolean.s
+
+# target to generate assembly for a file
+src/boolean.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/boolean.cpp.s
+.PHONY : src/boolean.cpp.s
+
 src/command.o: src/command.cpp.o
 
 .PHONY : src/command.o
@@ -203,6 +257,33 @@ src/directory.s: src/directory.cpp.s
 src/directory.cpp.s:
 	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/directory.cpp.s
 .PHONY : src/directory.cpp.s
+
+src/interpreter.o: src/interpreter.cpp.o
+
+.PHONY : src/interpreter.o
+
+# target to build an object file
+src/interpreter.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/interpreter.cpp.o
+.PHONY : src/interpreter.cpp.o
+
+src/interpreter.i: src/interpreter.cpp.i
+
+.PHONY : src/interpreter.i
+
+# target to preprocess a source file
+src/interpreter.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/interpreter.cpp.i
+.PHONY : src/interpreter.cpp.i
+
+src/interpreter.s: src/interpreter.cpp.s
+
+.PHONY : src/interpreter.s
+
+# target to generate assembly for a file
+src/interpreter.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/interpreter.cpp.s
+.PHONY : src/interpreter.cpp.s
 
 src/logger.o: src/logger.cpp.o
 
@@ -294,6 +375,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... basic"
+	@echo "... src/arithmetic.o"
+	@echo "... src/arithmetic.i"
+	@echo "... src/arithmetic.s"
+	@echo "... src/boolean.o"
+	@echo "... src/boolean.i"
+	@echo "... src/boolean.s"
 	@echo "... src/command.o"
 	@echo "... src/command.i"
 	@echo "... src/command.s"
@@ -303,6 +390,9 @@ help:
 	@echo "... src/directory.o"
 	@echo "... src/directory.i"
 	@echo "... src/directory.s"
+	@echo "... src/interpreter.o"
+	@echo "... src/interpreter.i"
+	@echo "... src/interpreter.s"
 	@echo "... src/logger.o"
 	@echo "... src/logger.i"
 	@echo "... src/logger.s"

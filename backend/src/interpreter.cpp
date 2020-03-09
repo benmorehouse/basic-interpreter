@@ -5,13 +5,69 @@ Interpreter::Interpreter(std::ifstream& in){
 	this->parse(in);
 }
 
-Interpreter::~Interpreter(){
-}
+Interpreter::~Interpreter(){}
 
 /*
  * used to load the string so we can push to parse numeric Expression
  *
 */
+
+NumericExpression* Interpreter::parseNumericExpression(std::string input, int &position){
+	std::cout<<"test"<<std::endl;
+	trimWhiteSpace(input, position);
+	if(input[position] >= '0' && input[position] <= '9'){
+		return parseConstant(input, position);
+	}else if(input[position] == '('){ // must be a binary operator at this point 
+		position++;
+		trimWhiteSpace(input, position);
+		NumericExpression *left = parseNumericExpression(input,position);
+		char operand = input[position];
+		position++;
+		trimWhiteSpace(input, position);
+		NumericExpression *right = parseNumericExpression(input,position);
+		if(operand=='+'){
+			AdditionExpression *addVal = new AdditionExpression(left,right);
+			return addVal;
+		}else if(operand == '-'){
+			SubtractionExpression *subVal = new SubtractionExpression(left,right);
+			return subVal;
+		}else if(operand == '/'){
+			DivisionExpression *divVal = new DivisionExpression(left,right);
+			return divVal;
+		}else if(operand == '*'){
+			MultiplicationExpression *multVal = new MultiplicationExpression(left,right);
+			return multVal;
+		}else if(operand == '='){
+			EqualityExpression *equal = new EqualityExpression(left, right);
+			return equal;
+		}else if(operand == '<'){
+			LessExpression *less = new LessExpression(left, right);
+			return less;
+		}else if(operand == '>'){
+			GreaterExpression *great = new GreaterExpression(left, right);
+			return great;
+		}else{
+			return NULL;
+		}
+	}else{ // we parse a variable name
+		std::string name = parseVariableName(input,position);
+		trimWhiteSpace(input, position);
+		if(position >= input.length()){ // we are at end of line ->prevents seg faultj
+			Variable *var = new Variable(0,name); 	
+			return var;
+		}else if(input[position] == '['){
+			while(input[position] == ' ' && position < input.length()){position++;}
+			NumericExpression *index = parseNumericExpression(input,position);
+			trimWhiteSpace(input, position);
+			Array *array = new Array(name, index);
+			return array;
+		}else{
+			Variable *var = new Variable(0,name); 	
+			return var;
+		}
+	}
+}
+
 
 std::string Interpreter::loadString(std::stringstream& ss){
 	std::string output ="";
@@ -183,61 +239,7 @@ void Interpreter::write(){
  * data and then use it to push the vector of commands to the compiler
 */
 
-NumericExpression* Interpreter::parseNumericExpression(std::string input, int &position){
-	std::cout<<"test"<<std::endl;
-	trimWhiteSpace(input, position);
-	if(input[position] >= '0' && input[position] <= '9'){
-		return parseConstant(input, position);
-	}else if(input[position] == '('){ // must be a binary operator at this point 
-		position++;
-		trimWhiteSpace(input, position);
-		NumericExpression *left = parseNumericExpression(input,position);
-		char operand = input[position];
-		position++;
-		trimWhiteSpace(input, position);
-		NumericExpression *right = parseNumericExpression(input,position);
-		if(operand=='+'){
-			AdditionExpression *addVal = new AdditionExpression(left,right);
-			return addVal;
-		}else if(operand == '-'){
-			SubtractionExpression *subVal = new SubtractionExpression(left,right);
-			return subVal;
-		}else if(operand == '/'){
-			DivisionExpression *divVal = new DivisionExpression(left,right);
-			return divVal;
-		}else if(operand == '*'){
-			MultiplicationExpression *multVal = new MultiplicationExpression(left,right);
-			return multVal;
-		}else if(operand == '='){
-			EqualityExpression *equal = new EqualityExpression(left, right);
-			return equal;
-		}else if(operand == '<'){
-			LessExpression *less = new LessExpression(left, right);
-			return less;
-		}else if(operand == '>'){
-			GreaterExpression *great = new GreaterExpression(left, right);
-			return great;
-		}else{
-			return NULL;
-		}
-	}else{ // we parse a variable name
-		std::string name = parseVariableName(input,position);
-		trimWhiteSpace(input, position);
-		if(position >= input.length()){ // we are at end of line ->prevents seg faultj
-			Variable *var = new Variable(0,name); 	
-			return var;
-		}else if(input[position] == '['){
-			while(input[position] == ' ' && position < input.length()){position++;}
-			NumericExpression *index = parseNumericExpression(input,position);
-			trimWhiteSpace(input, position);
-			Array *array = new Array(name, index);
-			return array;
-		}else{
-			Variable *var = new Variable(0,name); 	
-			return var;
-		}
-	}
-}
+
 
 std::string Interpreter::parseVariableName(std::string input, int &position){
 	std::string output = "";

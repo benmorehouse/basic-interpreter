@@ -25,7 +25,7 @@ public:
 		return NEXP->getFinalValue();
 	}
 	*/
-	NumericExpression* parseNumericExpression(std::string line, int &position);
+	NumericExpression* parseNumericExpression(std::string , int &position);
 
 private:
 // functions
