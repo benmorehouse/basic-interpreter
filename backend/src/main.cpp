@@ -9,7 +9,8 @@ int main(int argc, char **argv) {
 		log->Error("Not enough arugments given for operating system");
 		return 0;
 	}
-		
+	
+	// 
 	os->Operate(argv, argc);
 	delete log;
 	delete os;

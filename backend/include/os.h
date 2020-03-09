@@ -96,4 +96,10 @@ class HelpCommand : Command {
 		CommandResponse* process(Directory*);
 };
 
+class CompileCommand : Command {
+	public:
+		CompileCommand();
+		CommandResponse* process();
+};
+
 #endif

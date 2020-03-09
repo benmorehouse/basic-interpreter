@@ -111,17 +111,179 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named testStudent
+# Target rules for targets named basic
 
 # Build rule for target.
-testStudent: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testStudent
-.PHONY : testStudent
+basic: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 basic
+.PHONY : basic
 
 # fast build rule for target.
-testStudent/fast:
-	$(MAKE) -f CMakeFiles/testStudent.dir/build.make CMakeFiles/testStudent.dir/build
-.PHONY : testStudent/fast
+basic/fast:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/build
+.PHONY : basic/fast
+
+src/arithmetic.o: src/arithmetic.cpp.o
+
+.PHONY : src/arithmetic.o
+
+# target to build an object file
+src/arithmetic.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/arithmetic.cpp.o
+.PHONY : src/arithmetic.cpp.o
+
+src/arithmetic.i: src/arithmetic.cpp.i
+
+.PHONY : src/arithmetic.i
+
+# target to preprocess a source file
+src/arithmetic.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/arithmetic.cpp.i
+.PHONY : src/arithmetic.cpp.i
+
+src/arithmetic.s: src/arithmetic.cpp.s
+
+.PHONY : src/arithmetic.s
+
+# target to generate assembly for a file
+src/arithmetic.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/arithmetic.cpp.s
+.PHONY : src/arithmetic.cpp.s
+
+src/boolean.o: src/boolean.cpp.o
+
+.PHONY : src/boolean.o
+
+# target to build an object file
+src/boolean.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/boolean.cpp.o
+.PHONY : src/boolean.cpp.o
+
+src/boolean.i: src/boolean.cpp.i
+
+.PHONY : src/boolean.i
+
+# target to preprocess a source file
+src/boolean.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/boolean.cpp.i
+.PHONY : src/boolean.cpp.i
+
+src/boolean.s: src/boolean.cpp.s
+
+.PHONY : src/boolean.s
+
+# target to generate assembly for a file
+src/boolean.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/boolean.cpp.s
+.PHONY : src/boolean.cpp.s
+
+src/command.o: src/command.cpp.o
+
+.PHONY : src/command.o
+
+# target to build an object file
+src/command.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/command.cpp.o
+.PHONY : src/command.cpp.o
+
+src/command.i: src/command.cpp.i
+
+.PHONY : src/command.i
+
+# target to preprocess a source file
+src/command.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/command.cpp.i
+.PHONY : src/command.cpp.i
+
+src/command.s: src/command.cpp.s
+
+.PHONY : src/command.s
+
+# target to generate assembly for a file
+src/command.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/command.cpp.s
+.PHONY : src/command.cpp.s
+
+src/compiler.o: src/compiler.cpp.o
+
+.PHONY : src/compiler.o
+
+# target to build an object file
+src/compiler.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/compiler.cpp.o
+.PHONY : src/compiler.cpp.o
+
+src/compiler.i: src/compiler.cpp.i
+
+.PHONY : src/compiler.i
+
+# target to preprocess a source file
+src/compiler.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/compiler.cpp.i
+.PHONY : src/compiler.cpp.i
+
+src/compiler.s: src/compiler.cpp.s
+
+.PHONY : src/compiler.s
+
+# target to generate assembly for a file
+src/compiler.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/compiler.cpp.s
+.PHONY : src/compiler.cpp.s
+
+src/directory.o: src/directory.cpp.o
+
+.PHONY : src/directory.o
+
+# target to build an object file
+src/directory.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/directory.cpp.o
+.PHONY : src/directory.cpp.o
+
+src/directory.i: src/directory.cpp.i
+
+.PHONY : src/directory.i
+
+# target to preprocess a source file
+src/directory.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/directory.cpp.i
+.PHONY : src/directory.cpp.i
+
+src/directory.s: src/directory.cpp.s
+
+.PHONY : src/directory.s
+
+# target to generate assembly for a file
+src/directory.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/directory.cpp.s
+.PHONY : src/directory.cpp.s
+
+src/interpreter.o: src/interpreter.cpp.o
+
+.PHONY : src/interpreter.o
+
+# target to build an object file
+src/interpreter.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/interpreter.cpp.o
+.PHONY : src/interpreter.cpp.o
+
+src/interpreter.i: src/interpreter.cpp.i
+
+.PHONY : src/interpreter.i
+
+# target to preprocess a source file
+src/interpreter.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/interpreter.cpp.i
+.PHONY : src/interpreter.cpp.i
+
+src/interpreter.s: src/interpreter.cpp.s
+
+.PHONY : src/interpreter.s
+
+# target to generate assembly for a file
+src/interpreter.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/interpreter.cpp.s
+.PHONY : src/interpreter.cpp.s
 
 src/logger.o: src/logger.cpp.o
 
@@ -129,7 +291,7 @@ src/logger.o: src/logger.cpp.o
 
 # target to build an object file
 src/logger.cpp.o:
-	$(MAKE) -f CMakeFiles/testStudent.dir/build.make CMakeFiles/testStudent.dir/src/logger.cpp.o
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/logger.cpp.o
 .PHONY : src/logger.cpp.o
 
 src/logger.i: src/logger.cpp.i
@@ -138,7 +300,7 @@ src/logger.i: src/logger.cpp.i
 
 # target to preprocess a source file
 src/logger.cpp.i:
-	$(MAKE) -f CMakeFiles/testStudent.dir/build.make CMakeFiles/testStudent.dir/src/logger.cpp.i
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/logger.cpp.i
 .PHONY : src/logger.cpp.i
 
 src/logger.s: src/logger.cpp.s
@@ -147,8 +309,62 @@ src/logger.s: src/logger.cpp.s
 
 # target to generate assembly for a file
 src/logger.cpp.s:
-	$(MAKE) -f CMakeFiles/testStudent.dir/build.make CMakeFiles/testStudent.dir/src/logger.cpp.s
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/logger.cpp.s
 .PHONY : src/logger.cpp.s
+
+src/main.o: src/main.cpp.o
+
+.PHONY : src/main.o
+
+# target to build an object file
+src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
+
+src/main.i: src/main.cpp.i
+
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
+
+src/os.o: src/os.cpp.o
+
+.PHONY : src/os.o
+
+# target to build an object file
+src/os.cpp.o:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/os.cpp.o
+.PHONY : src/os.cpp.o
+
+src/os.i: src/os.cpp.i
+
+.PHONY : src/os.i
+
+# target to preprocess a source file
+src/os.cpp.i:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/os.cpp.i
+.PHONY : src/os.cpp.i
+
+src/os.s: src/os.cpp.s
+
+.PHONY : src/os.s
+
+# target to generate assembly for a file
+src/os.cpp.s:
+	$(MAKE) -f CMakeFiles/basic.dir/build.make CMakeFiles/basic.dir/src/os.cpp.s
+.PHONY : src/os.cpp.s
 
 # Help Target
 help:
@@ -158,10 +374,34 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... testStudent"
+	@echo "... basic"
+	@echo "... src/arithmetic.o"
+	@echo "... src/arithmetic.i"
+	@echo "... src/arithmetic.s"
+	@echo "... src/boolean.o"
+	@echo "... src/boolean.i"
+	@echo "... src/boolean.s"
+	@echo "... src/command.o"
+	@echo "... src/command.i"
+	@echo "... src/command.s"
+	@echo "... src/compiler.o"
+	@echo "... src/compiler.i"
+	@echo "... src/compiler.s"
+	@echo "... src/directory.o"
+	@echo "... src/directory.i"
+	@echo "... src/directory.s"
+	@echo "... src/interpreter.o"
+	@echo "... src/interpreter.i"
+	@echo "... src/interpreter.s"
 	@echo "... src/logger.o"
 	@echo "... src/logger.i"
 	@echo "... src/logger.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/os.o"
+	@echo "... src/os.i"
+	@echo "... src/os.s"
 .PHONY : help
 
 

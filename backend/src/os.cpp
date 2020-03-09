@@ -14,6 +14,7 @@ enum CommandEnum {
 	pwd = 7,
 	mv = 8,
 	help = 111,
+	compile = 123,
 	ERROR = 999,
 };
 
@@ -125,6 +126,14 @@ void OperatingSystem::Operate(char **input, int len) {
 		case help: {
 			HelpCommand *helpCommand = new HelpCommand();
 		}
+
+		
+		case compile: {
+			// then we go and compile the one file that is in ../fqueue
+			// this process is the one exception to the operating system in the sense that by the time we reach this point, go will have processed and acknowledged that this action has been requested. 
+			// This simply just takes Go's word for it, and goes to look for that file to interprete and return the data of.
+			CompileCommand *compileCommand = new CompileCommand();	
+	  	}
 	}
 }
 
@@ -137,6 +146,7 @@ void OperatingSystem::InitializeCommandMap() {
 	this->CommandMap.insert(std::pair<std::string, int>("open", open));
 	this->CommandMap.insert(std::pair<std::string, int>("pwd", pwd));
 	this->CommandMap.insert(std::pair<std::string, int>("help", help));
+	this->CommandMap.insert(std::pair<std::string, int>("compile", help));
 }
 
 //########################################################
@@ -402,6 +412,14 @@ CommandResponse* MoveCommand::process(Directory* dir) {
 HelpCommand::HelpCommand() : Command() {}
 
 CommandResponse* HelpCommand::process(Directory* dir) {
+	return nullptr;
+}
+
+//###################### compile #########################
+
+CompileCommand::CompileCommand() : Command() {}
+
+CommandResponse* CompileCommand::process() {
 	return nullptr;
 }
 
