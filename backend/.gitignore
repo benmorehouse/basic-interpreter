@@ -17,6 +17,13 @@ CMakeLists.txt
 cmake_install.cmake
 CMakeCache.txt
 
-**/bin/CMakeFiles
+# bin ignores
 
+**/bin/CMakeFiles
+/bin/Makefile
+/bin/cmake_install.cmake
+/bin/CMakeCache.txt
+
+**/bin/CMakeFiles
+**CMakeFiles
 *Makefile
