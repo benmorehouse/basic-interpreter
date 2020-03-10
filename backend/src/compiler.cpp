@@ -241,7 +241,7 @@ void Compiler::main(){
 						}
 						continue;
 					}
-				}else{
+				} else {
 					int newline = this->variableValues.find(nexp->format())->second;
 					if(newline < 1){// throw an error to the user
 						std::cout << this->getErrorMessage(this->lineNumbers[cursor],"Line is less than zero->doesnt exist")<<std::endl;

@@ -81,7 +81,8 @@ std::string Interpreter::loadString(std::stringstream& ss){
 	return output;
 }
 
-void Interpreter::parse(std::ifstream& in) { // parseNumericExpression will be important for this 
+// This is the main function used to call the initial interpretation.
+void Interpreter::parse(std::ifstream& in) {
 	std::string buffer;  // we read in from the filestream to this string
 	std::vector<std::string> finalOutput;
 	std::stringstream stream;
@@ -281,6 +282,10 @@ int Interpreter::initialCheck(std::string input){
 		}
 	}
 	return -1;
+}
+
+std::string Interpreter::getOutFile() {
+	return this->ofileName;
 }
 
 

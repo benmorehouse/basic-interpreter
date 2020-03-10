@@ -1,8 +1,13 @@
 #include "../include/os.h"
 #include "../include/logger.h"
+#include "../include/interpreter.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <map>
+
+//##################################################
+//######## Enums representing each command #########
 
 enum CommandEnum {
 	ls = 0,
@@ -27,6 +32,8 @@ OperatingSystem::~OperatingSystem() {
 	delete this->Logger;
 }
 
+// HandleCommandOutput is used to take a command response struct
+// And force wrap it to a certain output type
 void HandleCommandOutput(CommandResponse* resp) {
 	std::cout << "FINAL --------------------------------------" << std::endl;
 	
@@ -125,18 +132,29 @@ void OperatingSystem::Operate(char **input, int len) {
 
 		case help: {
 			HelpCommand *helpCommand = new HelpCommand();
+			CommandResponse* response = helpCommand->process();
+			HandleCommandOutput(response);
+			delete helpCommand;
 		}
-
 		
 		case compile: {
-			// then we go and compile the one file that is in ../fqueue
-			// this process is the one exception to the operating system in the sense that by the time we reach this point, go will have processed and acknowledged that this action has been requested. 
-			// This simply just takes Go's word for it, and goes to look for that file to interprete and return the data of.
 			CompileCommand *compileCommand = new CompileCommand();	
+			CommandResponse* response;
+			if (len == 2) {
+				this->Logger->Error("Wasn't given a file to compile.");
+				response->success = false;
+				response->errorMessage = "Wasn't given a file to compile."; 
+				delete compileCommand;
+			}
+
+			response = compileCommand->process(input[2]);
+			HandleCommandOutput(response);
+			delete compileCommand;
 	  	}
 	}
 }
 
+// InitializeCommandMap is used to create a map for all command enums
 void OperatingSystem::InitializeCommandMap() {
 	this->CommandMap.insert(std::pair<std::string, int>("ls", ls));
 	this->CommandMap.insert(std::pair<std::string, int>("cd", cd));
@@ -411,16 +429,44 @@ CommandResponse* MoveCommand::process(Directory* dir) {
 
 HelpCommand::HelpCommand() : Command() {}
 
-CommandResponse* HelpCommand::process(Directory* dir) {
-	return nullptr;
+CommandResponse* HelpCommand::process() {
+	CommandResponse *cr = new CommandResponse();	
+	cr->success = true;
+	std::string s = "Hello and welcome to my basic interpreter!\n";
+	s += "The commands are:\n\n";
+	s += "ls 		list all directories and files within your current directory\n";
+	s += "cd <dir>		change directories\n";
+	s += "mkdir <dir>	make a directory\n";
+	s += "touch <dir>	make a file\n";
+	s += "rm <dir> 		remove a directory or file \n";
+	s += "open <file>	open a file\n";
+	s += "pwd		provide the working directory\n";
+	s += "mv 		move a file or directory to some other directory\n";
+	s += "help		display this menu\n";
+	s += "compile <file>	compile the basic file given\n";
+	cr->output = s;
+	return cr;
 }
 
 //###################### compile #########################
 
 CompileCommand::CompileCommand() : Command() {}
 
-CommandResponse* CompileCommand::process() {
-	return nullptr;
+CommandResponse* CompileCommand::process(std::string filename) {
+	// this needs to create an interreter instance.
+	CommandResponse *cr = new CommandResponse();	
+	
+	std::ifstream ifile;
+	std::string filePath = "../fqueue/" + filename;
+	ifile.open(filePath);
+	if (ifile.fail()) {
+		this->Logger->Error("An error occurred when we tried to open the file in the file queue.");
+		cr->success = false;
+		cr->errorMessage = "An error occurred when we tried to open the file in the file queue.";
+		return cr;
+	}
+	
+	Interpreter *interpreter = new Interpreter(ifile);
+	return cr;
 }
-
 

@@ -99,7 +99,7 @@ class HelpCommand : Command {
 class CompileCommand : Command {
 	public:
 		CompileCommand();
-		CommandResponse* process();
+		CommandResponse* process(std::string);
 };
 
 #endif

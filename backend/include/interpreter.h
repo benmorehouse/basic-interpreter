@@ -15,9 +15,7 @@ public:
 	Interpreter(std::ifstream& in);
 	~Interpreter();
 	void write();
-	std::string getOutFile(){
-		return this->ofileName;
-	}
+	std::string getOutFile();
 
 /*	double getNumericExpressionValue(std::string line){
 		int i = 0;

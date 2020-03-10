@@ -1,3 +1,0 @@
-/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles/rebuild_cache.dir
-/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles/edit_cache.dir
-/Users/benmorehouse/repositories/basicInterpreter/backend/bin/CMakeFiles/basic.dir
