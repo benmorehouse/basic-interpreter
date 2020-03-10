@@ -93,7 +93,7 @@ class MoveCommand : Command {
 class HelpCommand : Command {
 	public:
 		HelpCommand();
-		CommandResponse* process(Directory*);
+		CommandResponse* process();
 };
 
 class CompileCommand : Command {
