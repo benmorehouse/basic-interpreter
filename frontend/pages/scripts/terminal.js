@@ -1,10 +1,12 @@
-var term = new Terminal({
+window.onload  = function() {
+	var term = new Terminal({
 		theme: {
 			background: '#004671'
 		}
 	});
-// the color for the font is #54a0cb		
-term.open(document.getElementById('terminal'));
+	// the color for the font is #54a0cb		
+	term.open(document.getElementById('terminal'));
+}
 
 function runBasicTerminal() {
 	if (term._initialized) {

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 
 	_ "github.com/lib/pq" // driver for postgresql database
@@ -22,36 +21,36 @@ type DBcxn struct {
 	context   *context.Context
 }
 
-func (a *App) EstablishDbcxn() error {
+func (a *App) EstablishDbcxn(init bool) error {
 	if &a == nil || &a.Config == nil {
-		log.Error("Failed to establish database credentials: app not configured correctly")
-		return errors.New("Failed to establish database credentials: app not configured correctly")
+		log.Error(PostgresError(BadConfiguration, nil))
+		return PostgresError(BadConfiguration, nil)
 	}
 
 	conf := a.Config
 	if conf.DBHost == "" {
-		log.Error("DBHost unexpectedly found nil")
-		return errors.New("DBHost unexpectedly found nil")
+		log.Error(PostgresError(DBHostNil, nil))
+		return PostgresError(DBHostNil, nil)
 	}
 
 	if conf.DBName == "" {
-		log.Error("DBName unexpectedly found nil")
-		return errors.New("DBName unexpectedly found nil")
+		log.Error(PostgresError(DBNameNil, nil))
+		return PostgresError(DBNameNil, nil)
 	}
 
 	if &conf.DBPort == nil {
-		log.Error("DBPort unexpectedly found nil")
-		return errors.New("DBPort unexpectedly found nil")
+		log.Error(PostgresError(DBPortNil, nil))
+		return PostgresError(DBPortNil, nil)
 	}
 
 	if conf.DBUser == "" {
-		log.Error("DBUser unexpectedly found nil")
-		return errors.New("DBUser unexpectedly found nil")
+		log.Error(PostgresError(DBUserNil, nil))
+		return PostgresError(DBUserNil, nil)
 	}
 
 	if conf.UserTable == "" {
-		log.Error("DBUserTable unexpectedly found nil")
-		return errors.New("DBUserTable unexpectedly found nil")
+		log.Error(PostgresError(DBUserTableNil, nil))
+		return PostgresError(DBUserTableNil, nil)
 	}
 
 	var psqlInfo string
@@ -74,8 +73,8 @@ func (a *App) EstablishDbcxn() error {
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Error("Unable to establish connection with user database:", err)
-		return errors.New("Unable to establish connection with user database:" + err.Error())
+		log.Error(PostgresError(NoConnection, err))
+		return PostgresError(NoConnection, err)
 	}
 	defer db.Close()
 
@@ -83,8 +82,8 @@ func (a *App) EstablishDbcxn() error {
 
 	cxn, err := db.Conn(cont)
 	if err != nil {
-		log.Error("Failed to create database connection: ", err)
-		return errors.New("Failed to create database connection" + err.Error())
+		log.Error(PostgresError(NoConnection, err))
+		return PostgresError(NoConnection, err)
 	}
 
 	d := DBcxn{
@@ -99,9 +98,11 @@ func (a *App) EstablishDbcxn() error {
 	}
 
 	a.connection = &d
-	if err := a.createTableIfNotExists(); err != nil {
-		log.Error(err)
-		return err
+	if init {
+		if err := a.createTableIfNotExists(); err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	return nil
@@ -110,7 +111,8 @@ func (a *App) EstablishDbcxn() error {
 func (a *App) createTableIfNotExists() error {
 	conf := a.Config
 	c := a.connection
-	query := "Create table if not exists " + conf.UserTable
+	// this should use a ? from the database/sql library
+	query := "Create table ?"
 	query += `
 	(
 		userid varchar(30),
@@ -121,7 +123,7 @@ func (a *App) createTableIfNotExists() error {
 	);
 	`
 
-	_, err := c.cxn.ExecContext(*c.context, query)
+	_, err := c.cxn.ExecContext(*c.context, query, conf.UserTable)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -141,8 +143,8 @@ func (d *DBcxn) PostgresSelectUser(username string)(string, error){
 //returns boolean for if email exists in database
 func (d *DBcxn) PostgresEmailExists(email string) (bool, error) {
 	if email == "" {
-		log.Error("Didn't recieve an email in this function")
-		return false, errors.New("Didn't recieve an email in this function")
+		log.Error(PostgresError(NoEmailRecieved, nil))
+		return false, PostgresError(NoEmailRecieved, nil)
 	}
 
 	if err := d.cxn.PingContext(*d.context); err != nil {
@@ -194,7 +196,6 @@ func (d *DBcxn) PostgresCreateUser(requestBody *AuthRequestBody) error {
 	}
 
 	userId := generateUserId()
-	s := "Insert into %s(userid, password, email, firstname, lastname) values('%s','%s','%s','%s','%s')"
 
 	password, err := bcrypt.GenerateFromPassword([]byte(requestBody.CreatePassword), 10)
 	if err != nil {
@@ -202,12 +203,12 @@ func (d *DBcxn) PostgresCreateUser(requestBody *AuthRequestBody) error {
 		return err
 	}
 
-	insertQuery := fmt.Sprintf(s, d.UserTable, userId,
-		password, requestBody.Email,
-		requestBody.FirstName, requestBody.LastName)
+	insertQuery := "Insert into ? (userid, password, email, firstname, lastname) values('?','?','?','?','?')"
 
 	log.Info(insertQuery)
-	if _, err := d.cxn.ExecContext(*d.context, insertQuery); err != nil {
+	if _, err := d.cxn.ExecContext(*d.context, insertQuery,
+		d.UserTable, userId, password,
+		requestBody.Email, requestBody.FirstName, requestBody.LastName); err != nil {
 		log.Error(err)
 		return err
 	}

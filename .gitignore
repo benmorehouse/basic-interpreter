@@ -1,12 +1,27 @@
-cs.dSYM/
-main.dSYM/
-.flow.yml
-main
-input1.txt
-arithmetic.o
-boolean.o
-command.o
-compiler.o
-interpreter.o
-interpreter.txt
-compilerOutput.txt
+### Backend
+
+# Cmake ignores
+
+/backend/cmake_install.cmake
+/backend/CMakeCache.txt
+/backend/CMakeLists.txt
+/backend/cmake_install.cmake
+/backend/CMakeCache.txt
+
+# bin ignores
+
+**/backend/bin/CMakeFiles
+/backend/bin/Makefile
+/backend/bin/cmake_install.cmake
+/backend/bin/CMakeCache.txt
+
+**/backend/bin/CMakeFiles
+**/backend/CMakeFiles
+*/backend/Makefile
+
+#########################################
+
+### Frontend
+
+/frontend/frontend
+

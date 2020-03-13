@@ -37,7 +37,7 @@ type AppConf struct {
 
 func (a *App) LoadConfig() {
 
-	jsonFile, err := os.Open("conf.json")
+	jsonFile, err := os.Open(a.ConfigFile)
 	defer jsonFile.Close()
 	if err != nil {
 		a.Config = getDefaultConfig()
@@ -53,7 +53,7 @@ func (a *App) LoadConfig() {
 	}
 
 	if err = json.Unmarshal(confData, &config); err != nil {
-		a.Config = getDefaultConfig()
+		//		a.Config = getDefaultConfig()
 		return
 	}
 
@@ -79,10 +79,10 @@ func getDefaultConfig() *AppConf {
 		GithubPageURL:         "/github",
 		CreateAccountURL:      "/createAccount",
 		LoginAttemptedPageURL: "/loginAttempted",
-		AboutPageFile:         "pages/about.gohtml",
-		LoginPageFile:         "pages/login.gohtml",
-		TerminalPageFile:      "pages/terminal.gohtml",
-		GithubPageFile:        "pages/github.gohtml",
+		AboutPageFile:         "pages/about.html",
+		LoginPageFile:         "pages/login.html",
+		TerminalPageFile:      "pages/terminal.html",
+		GithubPageFile:        "pages/github.html",
 		TerminalInputFile:     "terminalInput.txt",
 		TerminalOutputFile:    "terminalOutput.txt",
 	}

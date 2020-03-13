@@ -47,14 +47,14 @@ func (a *App) ValidateUserLogin(email, password string) (bool, error) {
 
 func (a *App) CreateUser(requestBody *AuthRequestBody) error {
 	if &requestBody == nil {
-		return errors.New("Request body is nil")
+		return CreateUserError(RequestBodyNil)
 	}
 
 	exists, err := a.connection.PostgresEmailExists(requestBody.Email)
 	if err != nil {
 		return err
 	} else if exists == true {
-		return errors.New("Email already present in our database!")
+		return CreateUserError(EmailAlreadyPresent)
 	}
 
 	if err := a.connection.PostgresCreateUser(requestBody); err != nil {

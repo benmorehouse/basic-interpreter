@@ -1,0 +1,11 @@
+---
+default:
+        cmd: | #!/usr/bin/env bash
+
+                set -e
+
+                clear
+
+                cd ~/repositories/csci104proj/hw2/testing
+                clang++ -g arithmetic.cpp boolean.cpp command.cpp interpreter.cpp compiler.cpp main.cpp -o cs 
+                ./cs

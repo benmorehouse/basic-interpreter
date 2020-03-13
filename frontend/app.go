@@ -8,12 +8,14 @@ type App struct {
 	Pages      []Page // we might not need this
 	User       *Session
 	Config     *AppConf
+	ConfigFile string
 	connection *DBcxn
 }
 
-func NewApp() (*App, error) {
+func NewApp(configFile string, init bool) (*App, error) {
 
-	a := App{}
+	a := App{ConfigFile: configFile}
+
 	a.LoadConfig()
 
 	a.User = &Session{
@@ -30,7 +32,7 @@ func NewApp() (*App, error) {
 
 	a.Pages = pages
 
-	if err := a.EstablishDbcxn(); err != nil {
+	if err := a.EstablishDbcxn(init); err != nil {
 		log.Error(err)
 		return nil, err
 	}

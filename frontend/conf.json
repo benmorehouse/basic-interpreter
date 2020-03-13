@@ -18,10 +18,10 @@
 	"CreateAccountURL":		"/createAccount",
 	"LoginAttemptedPageURL":	"/loginAttempted",
 
-	"AboutPageFile":		"pages/about.gohtml",
-	"LoginPageFile":		"pages/login.gohtml",
-	"TerminalPageFile":		"pages/terminal.gohtml",
-	"GithubPageFile":		"pages/github.gohtml",
+	"AboutPageFile":		"pages/about.html",
+	"LoginPageFile":		"pages/login.html",
+	"TerminalPageFile":		"pages/terminal.html",
+	"GithubPageFile":		"pages/github.html",
 
 	"TerminalInputFile":		"terminalInput.txt",
 	"TerminalOutputFile":		"terminalOutput.txt",
