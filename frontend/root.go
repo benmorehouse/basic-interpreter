@@ -14,29 +14,32 @@ var cmd = &cobra.Command{
 	Use:   "", // will run everytime you type nothing in
 	Short: "A server hosting an Interpreter of the Basic Programming Language, a Linux command line prompt, and a few other features.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		verbose := viper.GetBool("verbose")
-		init := viper.GetBool("init")
+		isVerbose := viper.GetBool("verbose")
+		isInit := viper.GetBool("init")
 		conf := viper.GetString("conf")
-		help := viper.GetBool("help")
+		isHelp := viper.GetBool("help")
 
-		if help {
+		if isHelp {
 			return cmd.Help()
 		}
 
-		setLogger(verbose)
+		setLogger(isVerbose)
 
 		log.Info("Basic Interpreter Server started")
-		a, err := NewApp(conf, init)
+		a, err := NewApp(conf, isInit)
 		if err != nil {
 			log.Error(err)
 			log.Error("Ending Server lifespan...")
 			return err
 		}
 
+		//mux := http.NewServeMux() look into how a server mux works!
 		log.Info("App successfully intialized")
-		http.HandleFunc("/", a.HandleAbout)
+		http.Handle("/", http.FileServer(http.Dir("/pages/scripts")))
 		http.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
 		http.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
+
+		//mux.Handle(a.Config.TerminalPageURL, http.FileServer(http.Dir("/pages/scripts")))
 		http.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
 
 		// login and sign up handlers
@@ -45,7 +48,7 @@ var cmd = &cobra.Command{
 		http.HandleFunc(a.Config.LoginAttemptedPageURL, a.HandleLoginAttempt)
 		// login and sign up handlers
 
-		port := ":" + strconv.Itoa(a.Config.Port)
+		port := ":" + strconv.Itoa(a.Config.Port) // port is simply used to display the logging message!!
 		log.Info("Basic Interpreter Is Waiting...")
 		log.Info("LOCAL: http://localhost" + port)
 		err = http.ListenAndServe(port, nil)

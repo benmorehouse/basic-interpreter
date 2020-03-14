@@ -11,11 +11,13 @@ import (
 //##########################################################################################
 //############################## Page  Endpoints ###########################################
 
+// RedirectIndex is a function that should redirect users to the about endpoint.
 func (a *App) RedirectIndex(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "localhost:2272/about", 301)
 }
 
+// HandleAbout renders the about page file
 func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("About Page requested")
@@ -26,16 +28,19 @@ func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// HandleLogin renders the login page file
 func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Login Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
+
 	err := basicTemplate.Execute(w, a)
 	if err != nil {
 		log.Error(err)
 	}
 }
 
+// HandleGithub renders the login page file
 func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Github Page requested")
@@ -46,10 +51,12 @@ func (a *App) HandleGithub(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// HandleTerminal renders the terminal page file
 func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Terminal Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.TerminalPageFile))
+	http.FileServer(http.Dir("/pages/scripts"))
 	err := basicTemplate.Execute(w, nil)
 	if err != nil {
 		log.Error(err)
@@ -59,6 +66,7 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request) {
 //##########################################################################################
 //############################## User Auth Endpoints #######################################
 
+// AuthRequestBody is a struct which holds each user's request to authenticate
 type AuthRequestBody struct {
 	FirstName       string `json:"FirstName"`
 	LastName        string `json:"LastName"`
@@ -67,6 +75,8 @@ type AuthRequestBody struct {
 	Email           string `json:"Email"`
 }
 
+// writeResponse is a function used by the endpoints below to write a
+// response to the frontend ajax request
 func writeResponse(w http.ResponseWriter, success bool, statusMessage string) {
 	response := struct {
 		Success  bool   `json:"Success"`
@@ -94,6 +104,7 @@ func writeResponse(w http.ResponseWriter, success bool, statusMessage string) {
 	return
 }
 
+// HandleLoginAttempt is triggered when a user tries to login.
 func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Attempted Login... handling now")

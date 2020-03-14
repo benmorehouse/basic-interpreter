@@ -1,4 +1,5 @@
-window.onload  = function() {
+'use strict'
+function init() {
 	var term = new Terminal({
 		theme: {
 			background: '#004671'
@@ -43,4 +44,3 @@ function runBasicTerminal() {
 function prompt(term) {
 	term.write('\r\n$ ');
 }
-runBasicTerminal();

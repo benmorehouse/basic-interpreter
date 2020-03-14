@@ -9,7 +9,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css"></script>
-<script type="text/javascript" src="scripts/terminal.js"></script>
+<script type="text/javascript" src="terminal.js"></script>
 
 <style>
 .nav-wrapper{
@@ -48,4 +48,10 @@
 
 	<div id="terminal"></div>
     </body>
+	<script>
+	window.onload = function() {
+		init();
+		runBasicTerminal();
+	}
+	</script>
 </html>

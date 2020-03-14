@@ -1,3 +1,4 @@
+'use strict'
 function login(){
 	email = document.getElementById('login-email').value;
 	password = document.getElementById('login-password').value;
