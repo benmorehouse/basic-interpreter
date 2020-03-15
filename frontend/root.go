@@ -2,8 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"net/http"
-	"strconv"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -23,39 +21,17 @@ var cmd = &cobra.Command{
 			return cmd.Help()
 		}
 
-		setLogger(isVerbose)
-
-		log.Info("Basic Interpreter Server started")
-		a, err := NewApp(conf, isInit)
-		if err != nil {
-			log.Error(err)
-			log.Error("Ending Server lifespan...")
-			return err
+		i := InitOptions{
+			IsVerbose: isVerbose,
+			IsInit:    isInit,
+			Config:    conf,
 		}
 
-		//mux := http.NewServeMux() look into how a server mux works!
-		log.Info("App successfully intialized")
-		http.Handle("/", http.FileServer(http.Dir("/pages/scripts")))
-		http.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
-		http.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
-
-		//mux.Handle(a.Config.TerminalPageURL, http.FileServer(http.Dir("/pages/scripts")))
-		http.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
-
-		// login and sign up handlers
-		http.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)
-		http.HandleFunc(a.Config.CreateAccountURL, a.HandleCreateAccount)
-		http.HandleFunc(a.Config.LoginAttemptedPageURL, a.HandleLoginAttempt)
-		// login and sign up handlers
-
-		port := ":" + strconv.Itoa(a.Config.Port) // port is simply used to display the logging message!!
-		log.Info("Basic Interpreter Is Waiting...")
-		log.Info("LOCAL: http://localhost" + port)
-		err = http.ListenAndServe(port, nil)
-		if err != nil {
+		if err := StartServer(i); err != nil {
 			log.Error(err)
 			return err
 		}
+
 		return nil
 	},
 }

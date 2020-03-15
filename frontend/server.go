@@ -4,12 +4,70 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 )
 
-//##########################################################################################
-//############################## Page  Endpoints ###########################################
+// ##########################################################################################
+// ############################## Page Endpoints ###########################################
+
+type InitOptions struct {
+	IsVerbose bool
+	IsInit    bool
+	Config    string
+}
+
+func StartServer(i InitOptions) error {
+
+	setLogger(i.IsVerbose)
+
+	log.Info("Basic Interpreter Server started")
+	a, err := NewApp(i.Config, i.IsInit)
+	if err != nil {
+		log.Error(err)
+		log.Error("Ending Server lifespan...")
+		return err
+	}
+
+	log.Info("App successfully intialized")
+
+	router := http.NewServeMux()
+	router.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
+	router.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
+
+	//mux.Handle(a.Config.TerminalPageURL, http.FileServer(http.Dir("/pages/scripts")))
+	router.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
+
+	// login and sign up handlers  http.FileServer(http.Dir("/pages/script"))
+	router.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)
+	router.HandleFunc(a.Config.CreateAccountURL, a.HandleCreateAccount)
+	router.HandleFunc(a.Config.LoginAttemptedPageURL, a.HandleLoginAttempt)
+	// login and sign up handlers
+
+	port := ":" + strconv.Itoa(a.Config.Port) // port is simply used to display the logging message!!
+	log.Info("Basic Interpreter Is Waiting...")
+	log.Info("LOCAL: http://localhost" + port)
+	err = http.ListenAndServe(port, router)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+// HandleLogin renders the login page file
+func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request) {
+
+	log.Info("Login Page requested")
+	//fileServer :=
+	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
+	err := basicTemplate.Execute(w, a)
+	if err != nil {
+		log.Error(err)
+	}
+}
 
 // RedirectIndex is a function that should redirect users to the about endpoint.
 func (a *App) RedirectIndex(w http.ResponseWriter, r *http.Request) {
@@ -22,18 +80,6 @@ func (a *App) HandleAbout(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("About Page requested")
 	basicTemplate := template.Must(template.ParseFiles(a.Config.AboutPageFile))
-	err := basicTemplate.Execute(w, a)
-	if err != nil {
-		log.Error(err)
-	}
-}
-
-// HandleLogin renders the login page file
-func (a *App) HandleLogin(w http.ResponseWriter, r *http.Request) {
-
-	log.Info("Login Page requested")
-	basicTemplate := template.Must(template.ParseFiles(a.Config.LoginPageFile))
-
 	err := basicTemplate.Execute(w, a)
 	if err != nil {
 		log.Error(err)
