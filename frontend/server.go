@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"os"
 	"strconv"
 
 	log "github.com/sirupsen/logrus"
@@ -25,6 +26,7 @@ func StartServer(i InitOptions) error {
 	log.Info("Basic Interpreter Server started")
 	a, err := NewApp(i.Config, i.IsInit)
 	if err != nil {
+		err := ServerError(CreateAppFailed, err)
 		log.Error(err)
 		log.Error("Ending Server lifespan...")
 		return err
@@ -35,8 +37,6 @@ func StartServer(i InitOptions) error {
 	router := http.NewServeMux()
 	router.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
 	router.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
-
-	//mux.Handle(a.Config.TerminalPageURL, http.FileServer(http.Dir("/pages/scripts")))
 	router.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
 
 	// login and sign up handlers  http.FileServer(http.Dir("/pages/script"))
@@ -44,6 +44,18 @@ func StartServer(i InitOptions) error {
 	router.HandleFunc(a.Config.CreateAccountURL, a.HandleCreateAccount)
 	router.HandleFunc(a.Config.LoginAttemptedPageURL, a.HandleLoginAttempt)
 	// login and sign up handlers
+
+	// this will handle the pushing of where the scripts directory is.
+	// this should be called from a scripts directory constant.
+	// and should check to see if this directory exists
+	// and also then push that to the gohtml
+	if _, err := os.Stat(a.Config.PathToScripts); os.IsNotExist(err) {
+		log.Error(err)
+		return err
+	}
+
+	router.Handle(a.Config.ScriptsPrefix, http.StripPrefix(a.Config.ScriptsPrefix, http.FileServer(http.Dir(a.Config.PathToScripts))))
+	router.Handle(a.Config.CSSPrefix, http.StripPrefix(a.Config.CSSPrefix, http.FileServer(http.Dir(a.Config.PathToCSS))))
 
 	port := ":" + strconv.Itoa(a.Config.Port) // port is simply used to display the logging message!!
 	log.Info("Basic Interpreter Is Waiting...")
@@ -221,7 +233,7 @@ func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 
 type TerminalRequestBody struct {
 	Command    string
-	IsBasic    bool // Whether or not we are compiling basic code
+	IsBasic    bool
 	FileSelect string
 }
 

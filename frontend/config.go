@@ -33,6 +33,10 @@ type AppConf struct {
 	TerminalOutputFile     string `json:TerminalOutputFile`
 	PathToOperatingSystem  string `json:PathToOperatingSystem`
 	PathToBasicInterpreter string `json:PathToBasicInterpreter`
+	ScriptsPrefix          string `json:ScriptsPrefix`
+	PathToScripts          string `json:PathToScripts`
+	CSSPrefix              string `json:CSSPrefix`
+	PathToCSS              string `json:PathToCSS`
 }
 
 func (a *App) LoadConfig() {
@@ -79,12 +83,16 @@ func getDefaultConfig() *AppConf {
 		GithubPageURL:         "/github",
 		CreateAccountURL:      "/createAccount",
 		LoginAttemptedPageURL: "/loginAttempted",
-		AboutPageFile:         "pages/about.html",
-		LoginPageFile:         "pages/login.html",
-		TerminalPageFile:      "pages/terminal.html",
-		GithubPageFile:        "pages/github.html",
+		AboutPageFile:         "pages/about.gohtml",
+		LoginPageFile:         "pages/login.gohtml",
+		TerminalPageFile:      "pages/terminal.gohtml",
+		GithubPageFile:        "pages/github.gohtml",
 		TerminalInputFile:     "terminalInput.txt",
 		TerminalOutputFile:    "terminalOutput.txt",
+		ScriptsPrefix:         "/scripts/",
+		PathToScripts:         "/scripts",
+		PathToCSS:             "css/",
+		CSSPrefix:             "/css/",
 	}
 
 	return config
