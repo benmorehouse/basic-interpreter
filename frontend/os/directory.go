@@ -2,7 +2,8 @@ package bos
 
 import (
 	"sort"
-
+	errors "github.com/benmorehouse/basicInterpreter/err"
+	gen "github.com/benmorehouse/basicInterpreter/err"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -39,7 +40,7 @@ func (d Directory) AddDirectory(subDir *Directory) error
 	}
 
 	if subDir == nil {
-		
+				
 	}
 
 	return nil
