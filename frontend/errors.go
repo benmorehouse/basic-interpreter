@@ -1,0 +1,162 @@
+package main
+
+import (
+	"fmt"
+)
+
+//########################################################
+//################### Postgres ###########################
+
+type CreateUserErrorType struct {
+	Type int
+}
+
+const (
+	RequestBodyNil      = iota
+	EmailAlreadyPresent = iota
+)
+
+func CreateUserError(typeof int) *CreateUserErrorType {
+	c := &CreateUserErrorType{
+		Type: typeof,
+	}
+	return c
+}
+
+func (c CreateUserErrorType) Error() string {
+
+	errorField := []string{
+		"request body is nil",
+		"email already present in our database",
+	}
+	return fmt.Sprintf("There was an error while creating a user: %s", errorField[c.Type])
+}
+
+//########################################################
+//################### Postgres ###########################
+
+type PostgresErrorType struct {
+	Type      int
+	NestedErr error
+}
+
+const (
+	BadConfiguration = iota
+	DBHostNil        = iota
+	DBNameNil        = iota
+	DBPortNil        = iota
+	DBUserNil        = iota
+	DBUserTableNil   = iota
+	NoConnection     = iota
+	NoEmailRecieved  = iota
+)
+
+func PostgresError(typeof int, err error) *PostgresErrorType {
+	c := &PostgresErrorType{
+		Type:      typeof,
+		NestedErr: err,
+	}
+	return c
+}
+
+func (c PostgresErrorType) Error() string {
+
+	errorField := []string{
+		"Failed to establish database credentials: app not configured correctly",
+		"DBHost unexpectedly found nil",
+		"DBName unexpectedly found nil",
+		"DBPort unexpectedly found nil",
+		"DBUser unexpectedly found nil",
+		"DBUserTable unexpectedly found nil",
+		"Unable to establish connection with user database:",
+		"Failed to create database connection:",
+		"Didn't recieve an email in this function",
+	}
+
+	if c.NestedErr != nil {
+		return fmt.Sprintf("database error: %s : %s", errorField[c.Type], c.NestedErr.Error())
+	}
+
+	return fmt.Sprintf("database error: %s", errorField[c.Type])
+}
+
+//########################################################
+//################### Server #############################
+
+type ServerErrorType struct {
+	Type      int
+	NestedErr error
+}
+
+const (
+	CreateAppFailed      = iota
+	ScriptDirNotFound    = iota
+	ListenAndServeFailed = iota
+)
+
+func ServerError(typeof int, err error) *ServerErrorType {
+	serverError := &ServerErrorType{
+		Type:      typeof,
+		NestedErr: err,
+	}
+
+	return serverError
+}
+
+func (serverError ServerErrorType) Error() string {
+
+	errorField := []string{
+		"The app failed to initialize",
+		"Directory for javascript files not found",
+		"Listen and serve suddenly stopped",
+	}
+
+	if serverError.NestedErr != nil {
+		return fmt.Sprintf("server error: %s : %s", errorField[serverError.Type], serverError.NestedErr.Error())
+	}
+
+	return fmt.Sprintf("server error: %s", errorField[serverError.Type])
+
+}
+
+//########################################################
+//################### Operating system ###################
+
+type OperatingSystemErrorType struct {
+	Type      int
+	NestedErr error
+}
+
+// constants to be used
+const (
+	// <ErrorName> = iota
+	DirectoryIsNil   = iota
+	InvalidNameError = iota
+	DirectoryIsFile  = iota
+)
+
+func OperatingSystemError(typeof int, err error) *OperatingSystemErrorType {
+	operatingSystemError := &OperatingSystemErrorType{
+		Type:      typeof,
+		NestedErr: err,
+	}
+
+	return operatingSystemError
+}
+
+func (operatingSystemError OperatingSystemErrorType) Error() string {
+
+	errorField := []string{
+		//actual thing to display goes here.
+		"The passed in directory was found as nil",
+		"This is an invalid file or directory name",
+		"Wrong command to delete a file.",
+	}
+
+	if operatingSystemError.NestedErr != nil {
+		return fmt.Sprintf("server error: %s : %s", errorField[operatingSystemError.Type], operatingSystemError.NestedErr.Error())
+	}
+
+	return fmt.Sprintf("server error: %s", errorField[operatingSystemError.Type])
+
+}
