@@ -58,9 +58,9 @@ void OperatingSystem::Operate(char **input, int len) {
 	if (len < 2) {
 		this->Logger->Error("No command found");
 	}
-
+	
 	int commandEnum = this->CommandMap[input[1]];
-
+	
 	switch (commandEnum) {
 		case ERROR: {
 			std::string error(input[1]);
@@ -81,12 +81,17 @@ void OperatingSystem::Operate(char **input, int len) {
 			
 			CommandResponse* response;
 			if (len == 2) {
+				this->Logger->Info("go get the reponse!");
 				response = changeDirectoryCommand->process(this->currentDirectory, "");// hoping to pass in this address and have it change the address value.
+				this->Logger->Info("end of response getter");
 			} else {
 				response = changeDirectoryCommand->process(this->currentDirectory, input[2]);
+				this->Logger->Info("hit the else clause");
 			}
+			this->Logger->Info("Here we are at the end of the cd command");
 			HandleCommandOutput(response);
 			delete changeDirectoryCommand;
+			return;
 		}
 
 		case mkdir: {
@@ -104,18 +109,22 @@ void OperatingSystem::Operate(char **input, int len) {
 			}
 
 			delete makeDirectoryCommand;
+			return;
 	    	}
 
 		case touch: {
 			TouchCommand *touchCommand = new TouchCommand();
+			return;
 		}
 
 		case rm: {
 			RemoveCommand *removeCommand = new RemoveCommand();
+			return;
 		}
 
 		case open: {
 			OpenCommand *openCommand = new OpenCommand();
+			return;
 		}
 
 		case pwd: {
@@ -124,6 +133,7 @@ void OperatingSystem::Operate(char **input, int len) {
 			CommandResponse* response = provideCommand->process(nullptr);
 			HandleCommandOutput(response);
 			delete provideCommand;
+			return;
 		}
 
 		case mv: {
@@ -189,7 +199,7 @@ ListCommand::ListCommand() : Command() {}
 
 CommandResponse* ListCommand::process(Directory* dir) {
 	// Here we need to iterate through all of the directories in the operating system.
-	CommandResponse* response;
+	CommandResponse* response = new CommandResponse();
 	if (dir == nullptr) {
 		response->success = false;
 		response->errorMessage = "Passed in a nil directory.";
@@ -216,17 +226,21 @@ CommandResponse* ListCommand::process(Directory* dir) {
 ChangeDirectoryCommand::ChangeDirectoryCommand() : Command() {}
 
 CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string newDir) {
-	CommandResponse* response;
+	CommandResponse* response = new CommandResponse();
+	this->Logger->Info("1");
 	if (dir == nullptr) {
+		this->Logger->Info("2");
 		response->success = false;
 		response->errorMessage = "Passed in a nil directory.";
 		return response;
 	} else if (!dir->isDirectory()) {
+		this->Logger->Info("3");
 		response->success = false;
 		response->errorMessage = "This is apparently of type file?";
+		this->Logger->Info("5");
 		return response;
 	}
-
+	
 	if (newDir == "") {
 		// Then trickle up the tree to the home directory.
 		this->trickleUpToHome(dir);
@@ -234,6 +248,8 @@ CommandResponse* ChangeDirectoryCommand::process(Directory* dir, std::string new
 		response->output = "gone home!";
 		return response;
 	}
+		
+	this->Logger->Info("6");
 
 	Directory* changeToThisDirectory = dir->getDirectory(newDir);
 	if (changeToThisDirectory == nullptr) {
@@ -272,7 +288,7 @@ MakeDirectoryCommand::MakeDirectoryCommand() : Command() {}
 
 CommandResponse* MakeDirectoryCommand::process(Directory* dir, std::string newDir) {
 	
-	CommandResponse* response;
+	CommandResponse* response = new CommandResponse();
 	if (dir == nullptr) {
 		response->success = false;
 		response->errorMessage = "this doesnt seem to be a directory.";
@@ -332,7 +348,7 @@ CommandResponse* TouchCommand::process(Directory* dir, std::string newFile) {
 RemoveCommand::RemoveCommand() : Command() {}
 
 CommandResponse* RemoveCommand::process(Directory* dir, std::string removeFile) {
-	CommandResponse* response;
+	CommandResponse* response = new CommandResponse();
 	if (dir == nullptr) {
 		response->success = false;
 		response->errorMessage = "this doesnt seem to be a directory.";
@@ -380,24 +396,23 @@ ProvideCommand::ProvideCommand() : Command() {
 }
 
 CommandResponse* ProvideCommand::process(Directory* currentDirectory) {
-	this->Logger->Info("we got to the root of the pwd command");
-	CommandResponse* cr = new CommandResponse();
+	CommandResponse* response = new CommandResponse();
 	if (currentDirectory == nullptr) {
-		cr->success = false;
-		cr->errorMessage = "Directory found as nil";	
+		response->success = false;
+		response->errorMessage = "Directory found as nil";	
 	}
 
 	std::string pwdResult = this->ProvideHelper(currentDirectory);
 
 	if (pwdResult == "") {
-		cr->success = false;
-		cr->errorMessage = "provide working directory command not functioning as expected...";
+		response->success = false;
+		response->errorMessage = "provide working directory command not functioning as expected...";
 	} else {
-		cr->success = true;
-		cr->output = pwdResult;
+		response->success = true;
+		response->output = pwdResult;
 	}
 
-	return cr;
+	return response;
 }
 
 std::string ProvideCommand::ProvideHelper(Directory* dir) {
@@ -430,8 +445,8 @@ CommandResponse* MoveCommand::process(Directory* dir) {
 HelpCommand::HelpCommand() : Command() {}
 
 CommandResponse* HelpCommand::process() {
-	CommandResponse *cr = new CommandResponse();	
-	cr->success = true;
+	CommandResponse *response = new CommandResponse();	
+	response->success = true;
 	std::string s = "Hello and welcome to my basic interpreter!\n";
 	s += "The commands are:\n\n";
 	s += "ls 		list all directories and files within your current directory\n";
@@ -444,8 +459,8 @@ CommandResponse* HelpCommand::process() {
 	s += "mv 		move a file or directory to some other directory\n";
 	s += "help		display this menu\n";
 	s += "compile <file>	compile the basic file given\n";
-	cr->output = s;
-	return cr;
+	response->output = s;
+	return response;
 }
 
 //###################### compile #########################
@@ -454,19 +469,19 @@ CompileCommand::CompileCommand() : Command() {}
 
 CommandResponse* CompileCommand::process(std::string filename) {
 	// this needs to create an interreter instance.
-	CommandResponse *cr = new CommandResponse();	
+	CommandResponse *response = new CommandResponse();	
 	
 	std::ifstream ifile;
 	std::string filePath = "../fqueue/" + filename;
 	ifile.open(filePath);
 	if (ifile.fail()) {
 		this->Logger->Error("An error occurred when we tried to open the file in the file queue.");
-		cr->success = false;
-		cr->errorMessage = "An error occurred when we tried to open the file in the file queue.";
-		return cr;
+		response->success = false;
+		response->errorMessage = "An error occurred when we tried to open the file in the file queue.";
+		return response;
 	}
 	
 	Interpreter *interpreter = new Interpreter(ifile);
-	return cr;
+	return response;
 }
 
