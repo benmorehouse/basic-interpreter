@@ -21,6 +21,7 @@ type InitOptions struct {
 	Config    string
 }
 
+// StartServer will start the server
 func StartServer(i InitOptions) error {
 
 	setLogger(i.IsVerbose)
@@ -28,7 +29,7 @@ func StartServer(i InitOptions) error {
 	log.Info("Basic Interpreter Server started")
 	a, err := NewApp(i.Config, i.IsInit)
 	if err != nil {
-		err := ServerError(CreateAppFailed, err)
+		err := ServerError(CreateAppFailed, nil)
 		log.Error(err)
 		log.Error("Ending Server lifespan...")
 		return err
@@ -60,10 +61,21 @@ func StartServer(i InitOptions) error {
 		return err
 	}
 
-	router.Handle(a.Config.ScriptsPrefix, http.StripPrefix(a.Config.ScriptsPrefix, http.FileServer(http.Dir(a.Config.PathToScripts))))
-	router.Handle(a.Config.CSSPrefix, http.StripPrefix(a.Config.CSSPrefix, http.FileServer(http.Dir(a.Config.PathToCSS))))
+	// server the javascript files for the frontend
+	router.Handle(a.Config.ScriptsPrefix,
+		http.StripPrefix(a.Config.ScriptsPrefix, http.FileServer(http.Dir(a.Config.PathToScripts))))
+
+	// server the css files for the frontend
+	router.Handle(a.Config.CSSPrefix,
+		http.StripPrefix(a.Config.CSSPrefix, http.FileServer(http.Dir(a.Config.PathToCSS))))
 
 	port := ":" + strconv.Itoa(a.Config.Port) // port is simply used to display the logging message!!
+
+	go a.operatingSystem.RunOperatingSystem()
+	defer func() {
+		a.operatingSystem.DonePipe <- true
+	}()
+
 	log.Info("Basic Interpreter Is Waiting...")
 	log.Info("LOCAL: http://localhost" + port)
 	err = http.ListenAndServe(port, router)
@@ -202,6 +214,7 @@ func (a *App) HandleLoginAttempt(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// HandleCreateAccount will handle creating an account
 func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Attempted Login... handling now")
@@ -236,6 +249,7 @@ func (a *App) HandleCreateAccount(w http.ResponseWriter, r *http.Request) {
 //##########################################################################################
 //############################## Terminal Endpoints ########################################
 
+// TerminalRequestBody is the request body for terminal page requests
 type TerminalRequestBody struct {
 	Command string
 	IsBasic bool
@@ -244,26 +258,49 @@ type TerminalRequestBody struct {
 // Endpoint used to do directory traversal.
 func (a *App) HandleTerminalNav(w http.ResponseWriter, r *http.Request) {
 
+	respond := func(success bool, currentDirectory, output string) {
+		responseBody := struct {
+			Success          bool   `json:"Success"`
+			Messsage         string `json:"Message"`
+			CurrentDirectory string `json:"CurrentDirectory"`
+		}{
+			success,
+			output,
+			currentDirectory,
+		}
+
+		writeThisResponse, err := json.Marshal(responseBody)
+		if err != nil {
+			log.Error("Unable to create response for page:", err)
+			return
+		}
+
+		_, err = w.Write(writeThisResponse)
+		if err != nil {
+			log.Error("Unable to write response for attempt page:", err)
+			return
+		}
+		return
+	}
+
 	log.Info("Attempted to take terminal cli input... handling now")
 	requestBody := &TerminalRequestBody{}
 
 	if r.Method != "POST" {
-		log.Error("request method not aligned correctly for terminal commands function. Request Method:", r.Method)
-		writeResponse(w, false, "request method not aligned correctly for terminal commands function. Request Method: "+r.Method)
+		output := "request method not aligned correctly for terminal commands function. Request Method:" + r.Method
+		log.Error(output)
+		respond(false, "", output)
+		writeResponse(w, false, output)
 		return
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 		log.Error("Couldn't decode request body. Error thrown:", err)
-		writeResponse(w, false, "Couldn't decode request body. Error thrown:"+err.Error())
+
 		return
 	}
 
 	// at the point we need to execute the c++ binary and get the string output from it.
-	s, err := a.TakeTerminalCommandLineInput(requestBody.Command)
-	if err != nil {
-		writeResponse(w, false, "Backend couldnt process the terminal request:"+err.Error())
-	}
-
+	s := a.TakeTerminalCommandLineInput(requestBody.Command)
 	writeResponse(w, true, s)
 }

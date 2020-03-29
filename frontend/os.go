@@ -11,10 +11,13 @@ import (
 // and maps cli inputs to functions.
 type OperatingSystem struct {
 	CurrentDirectory *Directory
-	Pipe             chan string
+	CommandMap       map[string]Command
+	CommandPipe      chan string
+	ResponsePipe     chan CommandResponse
+	DonePipe         chan bool // this is only to be called at server termination.
 }
 
-// The command interface has just one method: do the processing needed for the command.
+// The command interface has just one method: process the command.
 type Command interface {
 	Process() *CommandResponse
 }
@@ -26,46 +29,84 @@ type CommandResponse struct {
 	Output  string
 }
 
-func (os *OperatingSystem) HandleProcess(cmd *Command) error {
+// HandleProcess is used by operating system to initiate all commands
+func (os *OperatingSystem) RunCommand(cmd Command) {
 
-	response := cmd.Process()
-	if !response.Success {
-		// then handle the error...
+	if cmd == nil {
+		log.Error("No command found for this request")
+		response := CommandResponse{
+			Output:  "Command not found",
+			Success: false,
+		}
+		os.ResponsePipe <- response
+		return
 	}
-	return nil
+	response := cmd.Process()
+	os.ResponsePipe <- *response
+}
+
+// createCommandMap will create the command map for the operating system
+func (os *OperatingSystem) createCommandMap() {
+
+	m := make(map[string]Command)
+	m["ls"] = &ls{dir: os.CurrentDirectory}
+	m["mkdir"] = &mkdir{currentDir: os.CurrentDirectory}
+	m["cd"] = &chdir{currentDir: os.CurrentDirectory, os: os}
+	os.CommandMap = m
 }
 
 // InitOS is called when the server first starts.
-func (a *App) InitOS() (*OperatingSystem, error) {
+func (a *App) InitOS() {
 
 	home, err := NewDirectory(a.User.FirstName, nil) // this should take the username of the user
+	log.Info(a.User.FirstName)
 	if err != nil {
 		err := OperatingSystemError(InvalidNameError, err)
 		log.Error(err)
-		return nil, err
+		return
 	}
-
-	m := make(map[string]*Command)
 
 	pipe := make(chan string)
+	doneChan := make(chan bool, 1)
+	responsePipe := make(chan CommandResponse)
+
 	os := &OperatingSystem{
 		CurrentDirectory: home,
-		CommandMap:       m,
-		Pipe:             pipe,
+		CommandPipe:      pipe,
+		DonePipe:         doneChan,
+		ResponsePipe:     responsePipe,
 	}
 
-	return os, nil
+	os.createCommandMap()
+	a.operatingSystem = os
 }
 
 // This is a function that will run continuously until the program terminates.
 // It takes in the input through its channel and generates output based on it, which is then pushed through the same output.
 // This is run as a goroutine in the app instance upon opening the terminal page.
-func RunOperatingSystem() {
+func (os *OperatingSystem) RunOperatingSystem() {
 
+	log.Info("The operating system has started")
+	doneCalled := false
+	for {
+		if doneCalled {
+			break
+		}
+
+		select {
+		case <-os.DonePipe:
+			doneCalled = true
+			break
+		case command := <-os.CommandPipe:
+			log.Info(command)
+			log.Info(command)
+			log.Info(command)
+			os.RunCommand(os.CommandMap[command])
+		}
+	}
 }
 
 // map each function to a string to be called by the terminal
-
 // Directory is a struct that will hold all Files and subdirs in a single interface.
 type Directory struct {
 	Name           string
@@ -75,6 +116,7 @@ type Directory struct {
 	IsRoot         bool
 }
 
+// NewDirectory will create a new directory to be used by the system.
 func NewDirectory(name string, parentDir *Directory) (*Directory, error) {
 
 	if strings.TrimSpace(name) == "" {
@@ -150,6 +192,7 @@ type File struct {
 	content []string
 }
 
+// NewFile will return a File structure
 func NewFile(name string) (*File, error) {
 
 	if strings.TrimSpace(name) == "" {
@@ -163,6 +206,7 @@ func NewFile(name string) (*File, error) {
 	return f, nil
 }
 
+// AddFile will add a file to a given directory
 func (d Directory) AddFile(file *File) error {
 
 	if file == nil {
@@ -173,6 +217,7 @@ func (d Directory) AddFile(file *File) error {
 	return nil
 }
 
+// RemoveFile will remove a file from a given directory
 func (d Directory) RemoveFile(fileName string) error {
 
 	if strings.TrimSpace(fileName) == "" {
@@ -222,6 +267,7 @@ type chdir struct {
 	nextDir    *Directory
 }
 
+// Process implements the Command interface
 func (cmd chdir) Process() *CommandResponse {
 
 	response := &CommandResponse{}
@@ -249,6 +295,7 @@ type mkdir struct {
 	nextDirName string
 }
 
+// Process implements the command interface
 func (cmd mkdir) Process() *CommandResponse {
 
 	response := &CommandResponse{}

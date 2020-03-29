@@ -17,6 +17,7 @@ const (
 )
 
 func CreateUserError(typeof int) *CreateUserErrorType {
+
 	c := &CreateUserErrorType{
 		Type: typeof,
 	}
