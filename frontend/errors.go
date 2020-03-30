@@ -138,6 +138,7 @@ const (
 	ProvidePathError     = iota
 	NoDirectoryGiven     = iota
 	NoFileNameGiven      = iota
+	NoFileFound          = iota
 )
 
 func OperatingSystemError(typeof int, err error) *OperatingSystemErrorType {

@@ -78,6 +78,10 @@ func (os *OperatingSystem) createCommandMap() {
 	m["mkdir"] = &mkdir{os: os}
 	m["cd"] = &chdir{os: os}
 	m["pwd"] = &pwd{os: os}
+	m["rm"] = &rm{os: os, recursive: false}
+	m["rmdir"] = &rm{os: os, recursive: true}
+	m["open"] = &rm{os: os, recursive: true}
+	m["touch"] = &touch{os: os}
 	m["clear"] = &clear{returnVal: "clear"}
 	m["help"] = &clear{returnVal: "help"}
 	os.CommandMap = m
@@ -266,6 +270,26 @@ func (d *Directory) RemoveFile(fileName string) error {
 	return nil
 }
 
+// OpenFile will return the file in the ajax request.
+func (d *Directory) OpenFile(fileName string) (*File, error) {
+
+	if d == nil {
+		err := OperatingSystemError(DirectoryIsNil, nil)
+		log.Error(err)
+		return nil, err
+	}
+
+	fileName = strings.TrimSpace(strings.ToLower(fileName))
+	if file := d.SubFiles[fileName]; file != nil {
+		return file, nil
+	}
+
+	err := OperatingSystemError(NoFileFound, nil)
+	log.Error(err)
+	return nil, err
+
+}
+
 // ########################################################################
 // ######################## Commands ######################################
 
@@ -406,7 +430,7 @@ func (cmd *touch) Process(input []string) *CommandResponse {
 	response := &CommandResponse{}
 	if input == nil || len(input) == 0 {
 		response.Success = false
-		response.Error = OperatingSystemError(NoDirectoryGiven, nil)
+		response.Error = OperatingSystemError(NoFileNameGiven, nil)
 		return response
 
 	}
@@ -427,7 +451,127 @@ func (cmd *touch) Process(input []string) *CommandResponse {
 
 	response.Success = true
 	return response
+}
 
+// rm will delete a file or directory within the instance
+type rm struct {
+	os         *OperatingSystem
+	recursive  bool
+	deleteName string
+}
+
+// Process implements the command interface
+func (cmd *rm) Process(input []string) *CommandResponse {
+
+	response := &CommandResponse{}
+	if input == nil || len(input) == 0 {
+		response.Success = false
+		response.Error = OperatingSystemError(NoFileNameGiven, nil)
+		return response
+	}
+
+	if cmd.os.CurrentDirectory == nil {
+		response.Success = false
+		response.Error = OperatingSystemError(DirectoryIsNil, nil)
+		return response
+	}
+
+	if strings.ToLower(input[0]) == "-r" {
+		cmd.recursive = true
+	}
+
+	if cmd.recursive {
+		if err := cmd.os.CurrentDirectory.RemoveDirectory(cmd.deleteName); err != nil {
+			response.Error = err
+			response.Success = false
+			response.Output = err.Error()
+			return response
+		}
+	}
+
+	if err := cmd.os.CurrentDirectory.RemoveFile(cmd.deleteName); err != nil {
+		response.Error = err
+		response.Success = false
+		response.Output = err.Error()
+		return response
+	}
+
+	response.Success = true
+	return response
+
+}
+
+// open will create a file within the instance.
+type open struct {
+	os *OperatingSystem
+}
+
+// Process implements the command interface
+func (cmd *open) Process(input []string) *CommandResponse {
+
+	response := &CommandResponse{}
+	if input == nil || len(input) == 0 {
+		response.Success = false
+		response.Error = OperatingSystemError(NoFileNameGiven, nil)
+		return response
+	}
+
+	if cmd.os.CurrentDirectory == nil {
+		response.Success = false
+		response.Error = OperatingSystemError(DirectoryIsNil, nil)
+		return response
+	}
+
+	// NOTE: This will return a file that we need to eventually pipe
+	_, err := cmd.os.CurrentDirectory.OpenFile(input[0])
+	if err != nil {
+		log.Error(err)
+		response.Success = false
+		response.Error = OperatingSystemError(DirectoryIsNil, nil)
+		response.Output = "No file found"
+		return response
+	}
+
+	response.Success = true
+	return response
+}
+
+// compile will compile the given basic program. This can also be triggered by a button
+// from within the xterm text editor.
+type compile struct {
+	os *OperatingSystem
+}
+
+// Process implements the command interface
+func (cmd *compile) Process(input []string) *CommandResponse {
+
+	response := &CommandResponse{}
+	if input == nil || len(input) == 0 {
+		response.Success = false
+		response.Error = OperatingSystemError(NoFileNameGiven, nil)
+		return response
+	}
+
+	if cmd.os.CurrentDirectory == nil {
+		response.Success = false
+		response.Error = OperatingSystemError(DirectoryIsNil, nil)
+		return response
+	}
+
+	// NOTE: This will return a file that we need to eventually pipe
+	_, err := cmd.os.CurrentDirectory.OpenFile(input[0])
+	if err != nil {
+		log.Error(err)
+		response.Success = false
+		response.Error = OperatingSystemError(DirectoryIsNil, nil)
+		response.Output = "No file found"
+		return response
+	}
+
+	// NOTE: After we get the file above we need to pipe it to a filestore object.
+
+	response.Success = true
+	return response
 }
 
 // clear is the make directory command for a directory
@@ -445,7 +589,7 @@ func (cmd *clear) Process(_ []string) *CommandResponse {
 	return response
 }
 
-// NOTE: still need a  remove command, open command
+// NOTE: still a open command
 // move command and a compile command
 // clear is the make directory command for a directory
 type help struct {

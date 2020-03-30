@@ -5,23 +5,9 @@ Accordding to the internet:
 
 Simply put, BASIC is well... a basic programming language! 
 
-# Installation
+# A quick peak 
 
-Simply clone this repository:
-
-	git clone https://github.com/benmorehouse/basicInterpreter.git
-
-Then, use the makefile to generate a binary on your local terminal
-
-	make basic
-
-Then once you have your file with which you want to generate the BASIC program, run the following
-
-	./basic [inputfile.txt]
-
-# Future features
-
-- I aim to have the array functionality fully operational soon. 
-- I also aim to no longer store the data in a local text file, but rather have it reside in a remote database. 
-
+![About page](.assets/about.png)
+![Terminal page](.assets/terminal.png)
+![Login page](.assets/login.png)
 
