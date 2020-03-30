@@ -23,7 +23,7 @@ func NewApp(configFile string, init bool) (*App, error) {
 
 	a.User = &Session{
 		LoggedIn:  true,
-		FirstName: "Ben Morehouse",
+		FirstName: "BenMorehouse",
 	}
 
 	pages := []Page{

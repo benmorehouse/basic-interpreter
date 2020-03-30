@@ -13,3 +13,8 @@ func (a *App) TakeTerminalCommandLineInput(input string) string {
 
 	return output.Output
 }
+
+func (a *App) GetCurrentDirectory() string {
+
+	return a.TakeTerminalCommandLineInput("pwd")
+}

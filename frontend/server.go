@@ -258,7 +258,7 @@ type TerminalRequestBody struct {
 // Endpoint used to do directory traversal.
 func (a *App) HandleTerminalNav(w http.ResponseWriter, r *http.Request) {
 
-	respond := func(success bool, currentDirectory, output string) {
+	respond := func(success bool, output, currentDirectory string) {
 		responseBody := struct {
 			Success          bool   `json:"Success"`
 			Messsage         string `json:"Message"`
@@ -283,24 +283,20 @@ func (a *App) HandleTerminalNav(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Info("Attempted to take terminal cli input... handling now")
 	requestBody := &TerminalRequestBody{}
 
 	if r.Method != "POST" {
 		output := "request method not aligned correctly for terminal commands function. Request Method:" + r.Method
 		log.Error(output)
-		respond(false, "", output)
-		writeResponse(w, false, output)
+		respond(false, output, "")
 		return
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 		log.Error("Couldn't decode request body. Error thrown:", err)
-
 		return
 	}
 
-	// at the point we need to execute the c++ binary and get the string output from it.
 	s := a.TakeTerminalCommandLineInput(requestBody.Command)
-	writeResponse(w, true, s)
+	respond(true, s, "")
 }

@@ -131,9 +131,13 @@ type OperatingSystemErrorType struct {
 // constants to be used
 const (
 	// <ErrorName> = iota
-	DirectoryIsNil   = iota
-	InvalidNameError = iota
-	DirectoryIsFile  = iota
+	DirectoryIsNil       = iota
+	InvalidNameError     = iota
+	DirectoryIsFile      = iota
+	OperatingSystemIsNil = iota
+	ProvidePathError     = iota
+	NoDirectoryGiven     = iota
+	NoFileNameGiven      = iota
 )
 
 func OperatingSystemError(typeof int, err error) *OperatingSystemErrorType {
@@ -152,6 +156,10 @@ func (operatingSystemError OperatingSystemErrorType) Error() string {
 		"The passed in directory was found as nil",
 		"This is an invalid file or directory name",
 		"Wrong command to delete a file.",
+		"Operating system has crashed.",
+		"Couldn't provide the path for the current directory",
+		"Expected a directory to be given",
+		"Expected a file name to be given",
 	}
 
 	if operatingSystemError.NestedErr != nil {

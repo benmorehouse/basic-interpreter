@@ -22,9 +22,14 @@ function runBasicTerminal(terminalProcessEndoint) {
 
 	term.onKey(e => {
 	    const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
-
 	    if (e.domEvent.keyCode === 13) {
 		// this is when they hit enter. we then run an endpoint which pushes to go server, which pushes to operating system.
+		if (currentTerminalInput.trim() == "") {
+			currentTerminalInput = ""
+			prompt(term, "")
+			return 
+		}
+
 		let requestBody = JSON.stringify({
 			Command: currentTerminalInput,
 		})
@@ -41,11 +46,16 @@ function runBasicTerminal(terminalProcessEndoint) {
 			if (!data.Success) {
 				console.log('there was an error with the terminal')
 				prompt(term, "");
-				return
 			} else {
-				console.log('here we are passing something back!')
-				prompt(term, data.Message);	
+				currentTerminalDirectory = data.CurrentDirectory
+				if (data.Message == "clear") {
+					clear(term);
+				} else {
+					prompt(term, data.Message);
+				}
 			}
+
+			currentTerminalInput = ""
 			//console.log(e.domEvent.keyCode)
 			//prompt(term); term instead will be the results from the server!
 		}).catch(err => {
@@ -53,8 +63,10 @@ function runBasicTerminal(terminalProcessEndoint) {
 		});
 	    } else if (e.domEvent.keyCode === 8) {
 		if (term._core.buffer.x > 2) {
-		    term.write('\b \b');
+			term.write('\b \b');
 		}
+		currentTerminalInput = currentTerminalInput.slice(0, -1);
+
 	    } else if (printable) {
 		currentTerminalInput = currentTerminalInput + e.key;
 		term.write(e.key);
@@ -63,10 +75,19 @@ function runBasicTerminal(terminalProcessEndoint) {
 }
 
 function prompt(term, output) {
-	if (output == "") {
-		term.write('\r\n' + currentTerminalDirectory + '$ ');
-		return
+	
+	if (output != "") {
+		term.write("\r\n" + output + "\r\n");
 	}
 	
-	term.write('\r\n' + currentTerminalDirectory + '$ ' + output);
+	term.write('\r\n' + currentTerminalDirectory + '$ ');
+}
+
+function clear(term) {
+	
+	let s = "";
+	for (let i=0; i<25; i++) {
+		s += '\r\n'
+	}
+	term.write(s + '\r\n' + currentTerminalDirectory + '$ ')
 }
