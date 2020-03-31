@@ -186,7 +186,7 @@ func (a *App) EstablishDbcxn(init bool) error {
 	return nil
 }
 
-func (a *App) createTableIfNotExists() error {
+func (a *App) createUserTableIfNotExists() error {
 	conf := a.Config
 	c := a.connection
 	// this should use a ? from the database/sql library
@@ -202,6 +202,28 @@ func (a *App) createTableIfNotExists() error {
 	`
 
 	_, err := c.cxn.ExecContext(*c.context, query, conf.UserTable)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func (a *App) createFileTableIfNotExists() error {
+
+	conf := a.Config
+	c := a.connection
+	// this should use a ? from the database/sql library
+	query := "Create table ?"
+	query += `
+	(
+		id varchar(30),
+		userid varchar(30),
+		file LONGBLOB,
+	);
+	`
+	_, err := c.cxn.ExecContext(*c.context, query, conf.FileTable)
 	if err != nil {
 		log.Error(err)
 		return err
