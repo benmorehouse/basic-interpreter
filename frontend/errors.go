@@ -50,6 +50,7 @@ const (
 	DBUserTableNil   = iota
 	NoConnection     = iota
 	NoEmailRecieved  = iota
+	FileIsNil        = iota
 )
 
 func PostgresError(typeof int, err error) *PostgresErrorType {
@@ -72,6 +73,7 @@ func (c PostgresErrorType) Error() string {
 		"Unable to establish connection with user database:",
 		"Failed to create database connection:",
 		"Didn't recieve an email in this function",
+		"a file became corrupt",
 	}
 
 	if c.NestedErr != nil {
@@ -168,5 +170,44 @@ func (operatingSystemError OperatingSystemErrorType) Error() string {
 	}
 
 	return fmt.Sprintf("server error: %s", errorField[operatingSystemError.Type])
+
+}
+
+// ############################################################
+// ############### FileStore ##################################
+
+type FileStoreError struct {
+	Type      int
+	NestedErr error
+}
+
+const (
+	InvalidFileName       = iota
+	InvalidFilePath       = iota
+	FileTranslationFailed = iota
+)
+
+func NewFileStoreError(typeof int, err error) *FileStoreError {
+	fileStoreError := &FileStoreError{
+		Type:      typeof,
+		NestedErr: err,
+	}
+
+	return fileStoreError
+}
+
+func (fileStoreError FileStoreError) Error() string {
+
+	errorField := []string{
+		"Cannot have #, &, <space>, or : in the file name",
+		"The Filepath has been found to be nil",
+		"File translation failed",
+	}
+
+	if fileStoreError.NestedErr != nil {
+		return fmt.Sprintf("server error: %s : %s", errorField[fileStoreError.Type], fileStoreError.NestedErr.Error())
+	}
+
+	return fmt.Sprintf("server error: %s", errorField[fileStoreError.Type])
 
 }

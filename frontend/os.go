@@ -216,7 +216,10 @@ func (d *Directory) GetSubDirectory(nextDirName string) *Directory {
 // File is a struct which contains the name as well as the method to get the File contents from the database.
 type File struct {
 	Name    string
+	Path    string
+	Basic   bool // if it is a basic file, otherwise shrug
 	content []string
+	Hash    []byte
 }
 
 // NewFile will return a File structure

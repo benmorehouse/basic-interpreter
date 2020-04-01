@@ -56,6 +56,7 @@ func (d *DBcxn) PostgresGetPassword(email string) ([]byte, error) {
 	return []byte(password), nil
 }
 
+// PostgresCreateUser will create the user and instantiate it into the database
 func (d *DBcxn) PostgresCreateUser(requestBody *AuthRequestBody) error {
 	if err := d.cxn.PingContext(*d.context); err != nil {
 		return err
@@ -183,6 +184,16 @@ func (a *App) EstablishDbcxn(init bool) error {
 		}
 	}
 
+	return nil
+}
+
+func (d *DBcxn) PingContext() error {
+
+	if err := d.cxn.PingContext(*d.context); err != nil {
+		err := PostgresError(NoConnection, err)
+		log.Error(err)
+		return err
+	}
 	return nil
 }
 
