@@ -10,6 +10,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// insert into (get table name) (get table columns) (get values)
+
 //returns boolean for if email exists in database
 func (d *DBcxn) PostgresEmailExists(email string) (bool, error) {
 	if email == "" {
