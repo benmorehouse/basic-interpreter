@@ -51,7 +51,6 @@ const (
 	NoConnection     = iota
 	NoEmailRecieved  = iota
 	FileIsNil        = iota
-	BadInterface     = iota
 )
 
 func PostgresError(typeof int, err error) *PostgresErrorType {
@@ -75,7 +74,6 @@ func (c PostgresErrorType) Error() string {
 		"Failed to create database connection:",
 		"Didn't recieve an email in this function",
 		"a file became corrupt",
-		"insert query has become invalid",
 	}
 
 	if c.NestedErr != nil {
