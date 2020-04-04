@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//returns boolean for if email exists in database
+// PostgresEmailExists returns boolean for if email exists in database
 func (d *DBcxn) PostgresEmailExists(email string) (bool, error) {
 	if email == "" {
 		log.Error(PostgresError(NoEmailRecieved, nil))
@@ -89,6 +89,7 @@ func (d *DBcxn) PostgresCreateUser(requestBody *AuthRequestBody) error {
 
 /*------------------- User Auth Code -------------------------------*/
 
+// DBcxn embodies the database connection
 type DBcxn struct {
 	Host      string
 	Name      string
@@ -96,10 +97,12 @@ type DBcxn struct {
 	User      string
 	Port      int
 	UserTable string
+	FileTable string
 	cxn       *sql.Conn //unexported connection to database
 	context   *context.Context
 }
 
+// EstablishDbcxn will establish the connection to the database
 func (a *App) EstablishDbcxn(init bool) error {
 	if &a == nil || &a.Config == nil {
 		log.Error(PostgresError(BadConfiguration, nil))
@@ -172,6 +175,7 @@ func (a *App) EstablishDbcxn(init bool) error {
 		User:      conf.DBUser,
 		Port:      conf.DBPort,
 		UserTable: conf.UserTable,
+		FileTable: conf.FileTable,
 		cxn:       cxn,
 		context:   &cont,
 	}
@@ -187,6 +191,7 @@ func (a *App) EstablishDbcxn(init bool) error {
 	return nil
 }
 
+// PingContext will ensure the database is still connected before each query.
 func (d *DBcxn) PingContext() error {
 
 	if err := d.cxn.PingContext(*d.context); err != nil {
@@ -197,6 +202,7 @@ func (d *DBcxn) PingContext() error {
 	return nil
 }
 
+// createUserTableIfNotExists will create the user table
 func (a *App) createUserTableIfNotExists() error {
 	conf := a.Config
 	c := a.connection
@@ -221,6 +227,8 @@ func (a *App) createUserTableIfNotExists() error {
 	return nil
 }
 
+// createFileTableIfNotExists will create the table file if it does
+// not exist already.
 func (a *App) createFileTableIfNotExists() error {
 
 	conf := a.Config

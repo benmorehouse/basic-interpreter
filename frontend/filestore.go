@@ -14,7 +14,7 @@ NOTE:
 
 // HashFileID will return a full fileID for the sql database
 // the fileID will be in the form of <filepath>#filename
-func (a *App) HashFileName(filename, filepath string) ([]byte, error) {
+func (a *App) ValidateFileName(filename, filepath string) ([]byte, error) {
 
 	fs := []byte{}
 	for _, char := range filename {
@@ -28,6 +28,8 @@ func (a *App) HashFileName(filename, filepath string) ([]byte, error) {
 			fs = append(fs, byte(char))
 		}
 	}
+	
+	fs = append(fs, byte("#"))
 
 	for _, char := range filepath {
 		switch char {
@@ -55,18 +57,46 @@ func (a *App) HashFileName(filename, filepath string) ([]byte, error) {
 // the ~filestore~ as you will :)
 func (d *DBcxn) GetFileFromFilestore(fileHash []byte) (*File, error) {
 
+	if err := d.PingContext(); err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	
+	query := fmt.Sprintf(
+		"select * from %s where id=%s;",
+		d.FileTable, 
+		string(fileHash)
+	)
+
+	buffer, err := d.cxn.QueryRowContext(*d.context, query)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	filepath, filename := "", ""	
+	cursor := 0
+	for key, value := range buffer {
+		if value == "#" {
+			cursor = key + 1
+			break
+		}
+
+		filepath += value
+	}
+
+	for _, value := range buffer[cursor:] {
+		
+	}
+
+	newFile := &File {
+			
+	}
+	
 	return nil, nil
 }
 
-// #################################################
-// ############## sql ##############################
-
-// NOTE: now would be a great time to have implemented an error interface. Then we just call
-// a.Save(whatever) all over the place.
-func (a *App) Save(interface{}) error {
-
-}
-
+// Save is used to save a file into the database
 func (d *DBcxn) Save(file *File) error {
 
 	if err := d.PingContext(); err != nil {
@@ -78,4 +108,5 @@ func (d *DBcxn) Save(file *File) error {
 		return err
 	}
 
+	return nil
 }
