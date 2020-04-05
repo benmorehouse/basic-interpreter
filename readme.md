@@ -9,5 +9,6 @@ Simply put, BASIC is well... a basic programming language!
 
 ![About page](.assets/about.png)
 ![Terminal page](.assets/terminal.png)
+![Text editor page](.assets/basicTextEditor.png)
 ![Login page](.assets/login.png)
 

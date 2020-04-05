@@ -22,7 +22,7 @@ type OperatingSystem struct {
 // InitOS is called when the server first starts.
 func (a *App) InitOS() {
 
-	home, err := NewDirectory(a.User.FirstName, nil) // this should take the username of the user
+	home, err := NewDirectory(a.User.Username, nil) // this should take the username of the user
 	if err != nil {
 		err := OperatingSystemError(InvalidNameError, err)
 		log.Error(err)
@@ -60,6 +60,16 @@ type CommandResponse struct {
 
 // HandleProcess is used by operating system to initiate all commands
 func (os *OperatingSystem) RunCommand(cmd Command, input []string) {
+
+	if !os.User.LoggedIn {
+		log.Error("User is no longer signed in")
+		response := CommandResponse{
+			Output:  "User session has expired. No changes will be saved.",
+			Success: false,
+		}
+		os.ResponsePipe <- response
+		return
+	}
 
 	if cmd == nil {
 		log.Error("No command found for this request")
@@ -518,6 +528,7 @@ func (cmd *touch) Process(input []string) *CommandResponse {
 		return response
 	}
 
+	log.Warning("Here we are about to start the go routine...")
 	go func() {
 		//fileHash, err := ValidateFileName(cmd.nextFileName, cmd.os.CurrentDirectory.ProvidePath())
 		newFile, err := cmd.os.CurrentDirectory.OpenFile(cmd.nextFileName)
@@ -526,7 +537,7 @@ func (cmd *touch) Process(input []string) *CommandResponse {
 			return
 		}
 
-		if err := cmd.os.Connection.Save(newFile); err != nil {
+		if err := cmd.os.Connection.Save(newFile, cmd.os.User.Username); err != nil {
 			log.Error(err)
 			return
 		}
@@ -581,7 +592,6 @@ func (cmd *rm) Process(input []string) *CommandResponse {
 
 	response.Success = true
 	return response
-
 }
 
 // open will create a file within the instance.
@@ -592,6 +602,9 @@ type open struct {
 // Process implements the command interface
 func (cmd *open) Process(input []string) *CommandResponse {
 
+	log.Info(input)
+	log.Info(input)
+	log.Info(input)
 	response := &CommandResponse{}
 	if input == nil || len(input) == 0 {
 		response.Success = false
@@ -605,8 +618,10 @@ func (cmd *open) Process(input []string) *CommandResponse {
 		return response
 	}
 
-	// NOTE: This will return a file that we need to eventually pipe
-	_, err := cmd.os.CurrentDirectory.OpenFile(input[0])
+	// Make two goroutines: one that gets the file from the datbase and
+	// the other that makes sure it is in the display directory.
+	// check within the operating system that we have the file.
+	file, err := cmd.os.CurrentDirectory.OpenFile(input[0])
 	if err != nil {
 		log.Error(err)
 		response.Success = false
@@ -615,7 +630,26 @@ func (cmd *open) Process(input []string) *CommandResponse {
 		return response
 	}
 
+	fileHash, err := ValidateFileName(file.Name, file.Path)
+	if err != nil {
+		log.Error(err)
+		response.Success = false
+		response.Error = err
+		response.Output = "No file found in the database"
+		return response
+	}
+
+	exists, err := cmd.os.Connection.FileAlreadyExists(fileHash, cmd.os.User.Username)
+	if err != nil || !exists {
+		log.Error(err)
+		response.Success = false
+		response.Error = err
+		response.Output = "No file found in the database"
+		return response
+	}
+
 	response.Success = true
+	response.Output = "OPEN " + string(fileHash)
 	return response
 }
 

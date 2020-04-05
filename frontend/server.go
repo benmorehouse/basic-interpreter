@@ -41,6 +41,7 @@ func StartServer(i InitOptions) error {
 	router.HandleFunc(a.Config.AboutPageURL, a.HandleAbout)
 	router.HandleFunc(a.Config.TerminalPageURL, a.HandleTerminal)
 	router.HandleFunc(a.Config.GithubPageURL, a.HandleGithub)
+	router.HandleFunc(a.Config.TextEditorPageURL, a.HandleTextEditor)
 
 	// login and sign up handlers  http.FileServer(http.Dir("/pages/script"))
 	router.HandleFunc(a.Config.LoginPageURL, a.HandleLogin)
@@ -139,6 +140,64 @@ func (a *App) HandleTerminal(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error(err)
 	}
+}
+
+// HandleTextEditor renders the text editor file
+func (a *App) HandleTextEditor(w http.ResponseWriter, r *http.Request) {
+
+	log.Info("Text Editor Page requested")
+
+	type TemplateWriter struct {
+		TerminalPageRedirect string `json:"TerminalPageRedirect"`
+		CompileEndpoint      string `json:"CompileEndpoint"`
+		SaveEndpoint         string `json:"SaveEndpoint"`
+		File                 *File  `json:"File"`
+	}
+
+	write := func(success bool, msg string, writer *TemplateWriter) {
+		Template := struct {
+			Message string          `json:"Message"`
+			Success bool            `json:"Success"`
+			Body    *TemplateWriter `json:"Body"`
+		}{
+			msg,
+			success,
+			writer,
+		}
+
+		if !success {
+			log.Error(msg)
+		}
+
+		basicTemplate := template.Must(template.ParseFiles(a.Config.TextEditorFile))
+		err := basicTemplate.Execute(w, Template)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	Template := &TemplateWriter{
+		TerminalPageRedirect: a.Config.TerminalPageURL,
+		CompileEndpoint:      a.Config.CompileEndpoint,
+		SaveEndpoint:         a.Config.SaveFileEndpoint,
+	}
+
+	// execute the template with something different.
+	fileHashField, exists := r.URL.Query()["hash"]
+	if !exists || len(fileHashField) == 0 {
+		write(false, "No file found", Template)
+		return
+	}
+
+	fileHash := fileHashField[0]
+	file, err := a.connection.GetFileFromFilestore([]byte(fileHash), a.User.Username)
+	if err != nil {
+		write(false, err.Error(), Template)
+		return
+	}
+
+	Template.File = file
+	write(true, "", Template)
 }
 
 //##########################################################################################

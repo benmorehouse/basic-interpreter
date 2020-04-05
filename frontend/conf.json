@@ -9,12 +9,10 @@
 	"UserTable":			"BasicUsers",
 	"FileTable":			"Filestore",
 
-	"BasicOutFile":			"basicOut.json",
-	"BasicInFile":			"basicIn.json",
-
 	"AboutPageURL":			"/",
 	"LoginPageURL":			"/login",
 	"TerminalPageURL":		"/terminal",
+	"TextEditorPageURL":		"/textEditor",
 	"GithubPageURL":		"/github",
 	"CreateAccountURL":		"/createAccount",
 	"LoginAttemptedPageURL":	"/loginAttempted",
@@ -23,12 +21,16 @@
 	"LoginPageFile":		"pages/login.gohtml",
 	"TerminalPageFile":		"pages/terminal.gohtml",
 	"GithubPageFile":		"pages/github.gohtml",
+	"TextEditorFile":		"pages/textEditor.gohtml",
 
 	"TerminalInputFile":		"terminalInput.txt",
 	"TerminalOutputFile":		"terminalOutput.txt",
 
 	"RunTerminalEndpoint":		"/RunTerminalEndpoint",
+	"RunTextEditorEndpoint":	"/RunTextEditorEndpoint",
 
+	"CompileEndpoint":       	"/CompileBasic",
+	"SaveFileEndpoint":      	"/SaveFile",
 	"PathToOperatingSystem":	"../backend/OperatingSystem",
 	"PathToBasicInterpreter":	"../backend/BasicInterpreter",
 	"PathToScripts":		"scripts/",

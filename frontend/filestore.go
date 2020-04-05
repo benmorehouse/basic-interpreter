@@ -1,26 +1,20 @@
 package main
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 )
-
-/*
-NOTE:
-	In order to hash for each user and each of their files, i want to
-	create filenames which are filepath_username, and then get a number hash for an id based on that.
-*/
 
 // HashFileID will return a full fileID for the sql database
 // the fileID will be in the form of <filepath>#filename
 func ValidateFileName(filename, filepath string) ([]byte, error) {
-
+	log.Info(filename)
+	log.Info(filepath)
 	fs := []byte{}
 	for _, char := range filename {
 		switch char {
 		case '#', '&', ':', ' ':
 			err := NewFileStoreError(InvalidFileName, nil)
+			log.Error(err)
 			log.Error(err)
 			return nil, err
 
@@ -36,6 +30,7 @@ func ValidateFileName(filename, filepath string) ([]byte, error) {
 		case '#', '&', ':', ' ':
 			err := NewFileStoreError(InvalidFileName, nil)
 			log.Error(err)
+			log.Error(err)
 			return nil, err
 
 		default:
@@ -43,6 +38,9 @@ func ValidateFileName(filename, filepath string) ([]byte, error) {
 		}
 	}
 
+	log.Warning(string(fs))
+	log.Warning(string(fs))
+	log.Warning(string(fs))
 	return fs, nil
 }
 
@@ -55,13 +53,19 @@ func (d *DBcxn) GetFileFromFilestore(fileHash []byte, currentUserID string) (*Fi
 		return nil, err
 	}
 
-	query := fmt.Sprintf(
-		"select * from %s where id=%s;",
+	query := `
+		select * from ?
+		where id=?
+		and userid=?;
+	`
+
+	row := d.cxn.QueryRowContext(
+		*d.context,
+		query,
 		d.FileTable,
 		string(fileHash),
+		currentUserID,
 	)
-
-	row := d.cxn.QueryRowContext(*d.context, query)
 
 	var fileBuffer, userID string
 	var contentBuffer []byte
@@ -99,7 +103,7 @@ func (d *DBcxn) GetFileFromFilestore(fileHash []byte, currentUserID string) (*Fi
 	newFile.CheckIfBasicFile()
 	newFile.ReadFileFromFilestore(contentBuffer)
 
-	return nil, nil
+	return newFile, nil
 }
 
 // Save is used to save a file into the database
@@ -114,18 +118,17 @@ func (d *DBcxn) Save(file *File, userId string) error {
 		return err
 	}
 
-	if exists, err := d.FileAlreadyExists(file, userId); err != nil {
-		log.Error(err)
-		return err
-	} else if exists {
-		err := NewFileStoreError(FileAlreadyExists, nil)
+	fileHash, err := ValidateFileName(file.Path, file.Name)
+	if err != nil {
 		log.Error(err)
 		return err
 	}
 
-	fileHash, err := ValidateFileName(file.Path, file.Name)
-	if err != nil {
+	if exists, err := d.FileAlreadyExists(fileHash, userId); err != nil {
 		log.Error(err)
+		return err
+	} else if exists {
+		log.Debug("Overwriting a user file...")
 		return err
 	}
 
@@ -158,20 +161,9 @@ func (d *DBcxn) Save(file *File, userId string) error {
 }
 
 // FileAlreadyExists will tell whether or not a file exists in the database already
-func (d *DBcxn) FileAlreadyExists(file *File, userId string) (bool, error) {
+func (d *DBcxn) FileAlreadyExists(fileHash []byte, userId string) (bool, error) {
 
 	if err := d.PingContext(); err != nil {
-		return true, err
-	}
-
-	if file == nil {
-		err := PostgresError(FileIsNil, nil)
-		return true, err
-	}
-
-	fileHash, err := ValidateFileName(file.Path, file.Name)
-	if err != nil {
-		log.Error(err)
 		return true, err
 	}
 
@@ -185,7 +177,7 @@ func (d *DBcxn) FileAlreadyExists(file *File, userId string) (bool, error) {
 		*d.context,
 		query,
 		d.FileTable,
-		fileHash,
+		string(fileHash),
 		userId,
 	); result != nil {
 		log.Error(NewFileStoreError(FileAlreadyExists, nil))

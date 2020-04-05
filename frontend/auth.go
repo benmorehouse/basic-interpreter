@@ -11,12 +11,12 @@ import (
 )
 
 type Session struct {
-	LoggedIn  bool
-	FirstName string
+	LoggedIn bool
+	Username string
 }
 
 func (a *App) SetUserSession(Firstname string) {
-	a.User.FirstName = Firstname
+	a.User.Username = Firstname
 	a.User.LoggedIn = true
 }
 

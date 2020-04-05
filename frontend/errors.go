@@ -209,9 +209,9 @@ func (fileStoreError FileStoreError) Error() string {
 	}
 
 	if fileStoreError.NestedErr != nil {
-		return fmt.Sprintf("server error: %s : %s", errorField[fileStoreError.Type], fileStoreError.NestedErr.Error())
+		return fmt.Sprintf("filestore error: %s : %s", errorField[fileStoreError.Type], fileStoreError.NestedErr.Error())
 	}
 
-	return fmt.Sprintf("server error: %s", errorField[fileStoreError.Type])
+	return fmt.Sprintf("filestore error: %s", errorField[fileStoreError.Type])
 
 }

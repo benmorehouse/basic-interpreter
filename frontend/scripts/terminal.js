@@ -3,9 +3,24 @@
 var currentTerminalInput = "";
 var currentTerminalDirectory = ""; // not sure if this is needed... need to see how the backend responds.
 
-function runBasicTerminal(terminalProcessEndoint) {
-	console.log("running the terminal")	
-	console.log(terminalProcessEndoint)	
+var terminalProcessEndoint = "";
+var textEditorEndpoint = "";
+
+function componentDidLoad(app) {
+	console.log(app);
+	if (app == undefined) {
+		console.error("App found to be nil")
+		return 
+	} else if (app.Config == undefined) {
+		console.error("App config found to be nil")
+		return 
+	} 
+	
+	terminalProcessEndoint = app.Config.RunTerminalEndpoint;
+	textEditorEndpoint = app.Config.RunTextEditorEndpoint;
+}
+
+function runBasicTerminal() {
 	if (term._initialized) {
 	    return;
 	}
@@ -33,8 +48,9 @@ function runBasicTerminal(terminalProcessEndoint) {
 		let requestBody = JSON.stringify({
 			Command: currentTerminalInput,
 		})
-		
+			
 		console.log(currentTerminalInput)
+		console.log(terminalProcessEndoint)
 		fetch(terminalProcessEndoint, {  
 			method:"POST",
 			credentials:"include",
@@ -48,8 +64,12 @@ function runBasicTerminal(terminalProcessEndoint) {
 				prompt(term, "");
 			} else {
 				currentTerminalDirectory = data.CurrentDirectory
-				if (data.Message == "clear") {
+				let messageField = data.Message.split(" ");
+				if (messageField[0] == "clear") {
 					clear(term);
+				} else if (messageField[0] == "open") {
+					prompt(term, "opening now...");
+					handleOpenFile(messageField);
 				} else {
 					prompt(term, data.Message);
 				}
@@ -90,4 +110,15 @@ function clear(term) {
 		s += '\r\n'
 	}
 	term.write(s + '\r\n' + currentTerminalDirectory + '$ ')
+}
+
+function handleOpenFile(message) {
+
+	if (message.length != 2) {
+		console.log('there was an error with the terminal')
+		prompt(term, "");
+		return;
+	}
+	// then we are going to make a get request with the hash id.
+	window.location.replace("http://localhost:2272/" + textEdit + "?hash="+message[1])
 }

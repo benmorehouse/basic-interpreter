@@ -23,6 +23,7 @@ type AppConf struct {
 	LoginPageURL           string `json:LoginPageURL`
 	LoginAttemptedPageURL  string `json:LoginAttemptedPageURL`
 	TerminalPageURL        string `json:TerminalPageURL`
+	TextEditorPageURL      string `json:TextEditorPageURL`
 	GithubPageURL          string `json:GithubPageURL`
 	CreateAccountURL       string `json:CreateAccountURL`
 	LoginURL               string `json:LoginAttemptedURL`
@@ -30,9 +31,11 @@ type AppConf struct {
 	LoginPageFile          string `json:LoginPageFile`
 	TerminalPageFile       string `json:TerminalPageFile`
 	GithubPageFile         string `json:GithubPageFile`
-	TerminalInputFile      string `json:TerminalInputFile`
-	TerminalOutputFile     string `json:TerminalOutputFile`
+	TextEditorFile         string `json:TextEditorFile`
+	CompileEndpoint        string `json:CompileEndpoint`
+	SaveFileEndpoint       string `json:SaveFileEndpoint`
 	RunTerminalEndpoint    string `json:RunTerminalEndpoint`
+	RunTextEditorEndpoint  string `json:RunTextEditorEndpoint`
 	PathToOperatingSystem  string `json:PathToOperatingSystem`
 	PathToBasicInterpreter string `json:PathToBasicInterpreter`
 	ScriptsPrefix          string `json:ScriptsPrefix`
@@ -85,15 +88,18 @@ func getDefaultConfig() *AppConf {
 		LoginPageURL:          "/login",
 		TerminalPageURL:       "/terminal",
 		GithubPageURL:         "/github",
+		TextEditorPageURL:     "/textEditor",
 		CreateAccountURL:      "/createAccount",
 		LoginAttemptedPageURL: "/loginAttempted",
 		AboutPageFile:         "pages/about.gohtml",
 		LoginPageFile:         "pages/login.gohtml",
 		TerminalPageFile:      "pages/terminal.gohtml",
 		GithubPageFile:        "pages/github.gohtml",
-		TerminalInputFile:     "terminalInput.txt",
-		TerminalOutputFile:    "terminalOutput.txt",
+		TextEditorFile:        "pages/textEditor.gohtml",
+		CompileEndpoint:       "/CompileBasic",
+		SaveFileEndpoint:      "/SaveFile",
 		RunTerminalEndpoint:   "/RunTerminalEndpoint",
+		RunTextEditorEndpoint: "/RunTextEditorEndpoint",
 		ScriptsPrefix:         "/scripts/",
 		PathToScripts:         "/scripts",
 		PathToCSS:             "css/",
