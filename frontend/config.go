@@ -16,6 +16,7 @@ type AppConf struct {
 	DBPass                 string `json:DBPass`
 	DBPort                 int    `json:DBPort`
 	UserTable              string `json:UserTable`
+	FileTable              string `json:FileTable`
 	BasicOutFile           string `json:BasicOutFile`
 	BasicInFile            string `json:BasicInFile`
 	AboutPageURL           string `json:AboutPageURL`
@@ -77,6 +78,7 @@ func getDefaultConfig() *AppConf {
 		DBPass:                "",
 		DBPort:                5432,
 		UserTable:             "BasicUsers",
+		FileTable:             "Filestore",
 		BasicOutFile:          "basicOut.json",
 		BasicInFile:           "basicIn.json",
 		AboutPageURL:          "/about",

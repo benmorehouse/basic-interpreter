@@ -69,6 +69,9 @@ func StartServer(i InitOptions) error {
 	router.Handle(a.Config.CSSPrefix,
 		http.StripPrefix(a.Config.CSSPrefix, http.FileServer(http.Dir(a.Config.PathToCSS))))
 
+	router.Handle("/pages/",
+		http.StripPrefix("/pages/", http.FileServer(http.Dir("pages/"))))
+
 	port := ":" + strconv.Itoa(a.Config.Port) // port is simply used to display the logging message!!
 
 	go a.operatingSystem.RunOperatingSystem()

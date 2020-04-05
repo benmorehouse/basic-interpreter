@@ -1,7 +1,7 @@
 package main
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -14,7 +14,7 @@ NOTE:
 
 // HashFileID will return a full fileID for the sql database
 // the fileID will be in the form of <filepath>#filename
-func (a *App) ValidateFileName(filename, filepath string) ([]byte, error) {
+func ValidateFileName(filename, filepath string) ([]byte, error) {
 
 	fs := []byte{}
 	for _, char := range filename {
@@ -28,8 +28,8 @@ func (a *App) ValidateFileName(filename, filepath string) ([]byte, error) {
 			fs = append(fs, byte(char))
 		}
 	}
-	
-	fs = append(fs, byte("#"))
+
+	fs = append(fs, byte('#'))
 
 	for _, char := range filepath {
 		switch char {
@@ -43,61 +43,67 @@ func (a *App) ValidateFileName(filename, filepath string) ([]byte, error) {
 		}
 	}
 
-	newFileStore, err := bcrypt.GenerateFromPassword(fs, 10)
-	if err != nil {
-		err := NewFileStoreError(FileTranslationFailed, err)
-		log.Error(err)
-		return nil, err
-	}
-
-	return newFileStore, nil
+	return fs, nil
 }
 
 // GetFileFromFilestore will get a file given a hash from the database.
 // the ~filestore~ as you will :)
-func (d *DBcxn) GetFileFromFilestore(fileHash []byte) (*File, error) {
+func (d *DBcxn) GetFileFromFilestore(fileHash []byte, currentUserID string) (*File, error) {
 
 	if err := d.PingContext(); err != nil {
 		log.Error(err)
 		return nil, err
 	}
-	
+
 	query := fmt.Sprintf(
 		"select * from %s where id=%s;",
-		d.FileTable, 
-		string(fileHash)
+		d.FileTable,
+		string(fileHash),
 	)
 
-	buffer, err := d.cxn.QueryRowContext(*d.context, query)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
+	row := d.cxn.QueryRowContext(*d.context, query)
 
-	filepath, filename := "", ""	
+	var fileBuffer, userID string
+	var contentBuffer []byte
+
+	row.Scan(
+		&fileBuffer,
+		&userID,
+		&contentBuffer,
+	)
+
+	filepath, filename := "", ""
 	cursor := 0
-	for key, value := range buffer {
-		if value == "#" {
+	for key, value := range fileBuffer {
+		if value == '#' {
 			cursor = key + 1
 			break
 		}
 
-		filepath += value
+		filepath += string(value)
 	}
 
-	for _, value := range buffer[cursor:] {
-		
+	if cursor > len(fileBuffer)-1 {
+		return nil, PostgresError(FileIsNil, nil)
 	}
 
-	newFile := &File {
-			
+	for _, value := range fileBuffer[cursor:] {
+		filename += string(value)
 	}
-	
+
+	newFile := &File{
+		Name: filename,
+		Path: filepath,
+	}
+
+	newFile.CheckIfBasicFile()
+	newFile.ReadFileFromFilestore(contentBuffer)
+
 	return nil, nil
 }
 
 // Save is used to save a file into the database
-func (d *DBcxn) Save(file *File) error {
+func (d *DBcxn) Save(file *File, userId string) error {
 
 	if err := d.PingContext(); err != nil {
 		return err
@@ -108,5 +114,83 @@ func (d *DBcxn) Save(file *File) error {
 		return err
 	}
 
+	if exists, err := d.FileAlreadyExists(file, userId); err != nil {
+		log.Error(err)
+		return err
+	} else if exists {
+		err := NewFileStoreError(FileAlreadyExists, nil)
+		log.Error(err)
+		return err
+	}
+
+	fileHash, err := ValidateFileName(file.Path, file.Name)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	//fileHash is the ida
+	query := `
+		insert into ? (
+			id,
+			userid, 
+			file
+		) values (
+			?,
+			?,
+			?	
+		);	
+	`
+
+	if _, err = d.cxn.ExecContext(
+		*d.context,
+		query,
+		d.FileTable,
+		fileHash,
+		userId,
+		file.WriteFileForSaving(),
+	); err != nil {
+		log.Error(err)
+		return err
+	}
+
 	return nil
+}
+
+// FileAlreadyExists will tell whether or not a file exists in the database already
+func (d *DBcxn) FileAlreadyExists(file *File, userId string) (bool, error) {
+
+	if err := d.PingContext(); err != nil {
+		return true, err
+	}
+
+	if file == nil {
+		err := PostgresError(FileIsNil, nil)
+		return true, err
+	}
+
+	fileHash, err := ValidateFileName(file.Path, file.Name)
+	if err != nil {
+		log.Error(err)
+		return true, err
+	}
+
+	query := `
+		select * from ?
+		where id=?
+		and userid=?;
+	`
+
+	if result := d.cxn.QueryRowContext(
+		*d.context,
+		query,
+		d.FileTable,
+		fileHash,
+		userId,
+	); result != nil {
+		log.Error(NewFileStoreError(FileAlreadyExists, nil))
+		return true, nil
+	}
+
+	return false, nil
 }

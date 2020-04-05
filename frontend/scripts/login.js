@@ -1,15 +1,65 @@
 'use strict'
+
+var loginEmail = "";
+var loginPassword = "";
+
+var firstName = "";
+var lastName = "";
+var createPassword = "";
+var confirmPassword = "";
+var createEmail = "";
+
+function onInputLoginEmail(e) {
+	
+	loginEmail = e;
+}
+
+function onInputLoginPassword(e) {
+
+	loginPassword = e;
+}
+
+function onInputFirstname(e) {
+	
+	firstName = e;
+}
+
+function onInputLastname(e) {
+
+	lastName = e;
+}
+
+function onInputPassword(e) {
+
+	createPassword = e
+	if (createPassword != confirmPassword) {
+		handleSignUpError("Passwords must match")	
+		return
+	}
+
+}
+
+function onInputConfirmpassword(e) {
+
+	confirmPassword = e;
+	if (createPassword != confirmPassword) {
+		handleSignUpError("Passwords must match")	
+		return
+	}
+}
+
+function onInputCreateEmail(e) {
+
+	createEmail = e;
+}
+
 function login(loginEndpoint){
 	
 	console.log("Attempting a user login...")
-	email = document.getElementById('login-email').value;
-	password = document.getElementById('login-password').value;
-	console.log(email);
-	console.log(password);
 
 	var requestBody = JSON.stringify({
-	    Email: email,
-	    CreatePassword: password
+	    Email: loginEmail,
+	    CreatePassword: loginPassword
 	});
 	
 	// need to figure out a way to get the endpoints needed for this.
@@ -38,12 +88,6 @@ function handleLoginMessage(err) {
 function signup(signUpEndpoint) {
 
 	console.log("Attempting a user signup...")
-	firstName = document.getElementById("first_name").value;
-	lastName = document.getElementById("last_name").value;
-	createPassword = document.getElementById("create-password").value;
-	confirmPassword = document.getElementById("confirm-password").value;
-	email = document.getElementById("email").value;
-
 	if (confirmPassword == ""){
 		handleSignUpError("confirm password not filled in")	
 		return
@@ -56,7 +100,7 @@ function signup(signUpEndpoint) {
 	} else if (lastName == "") {
 		handleSignUpError("last name not filled in")	
 		return
-	} else if (email == "") {
+	} else if (createEmail == "") {
 		handleSignUpError("Email not filled in")	
 		return
 	} else if (createPassword != confirmPassword) {
@@ -69,10 +113,8 @@ function signup(signUpEndpoint) {
 		LastName: lastName,
 		CreatePassword: createPassword,
 		ConfirmPassword: confirmPassword,
-		Email: email
+		Email: createEmail
 	});
-
-	console.log(requestBody);
 
 	fetch(signUpEndpoint, {
 		method:"POST",

@@ -10,6 +10,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// DBcxn embodies the database connection
+type DBcxn struct {
+	Host      string
+	Name      string
+	Password  string
+	User      string
+	Port      int
+	UserTable string
+	FileTable string
+	cxn       *sql.Conn //unexported connection to database
+	context   *context.Context
+}
+
 // PostgresEmailExists returns boolean for if email exists in database
 func (d *DBcxn) PostgresEmailExists(email string) (bool, error) {
 	if email == "" {
@@ -88,19 +101,6 @@ func (d *DBcxn) PostgresCreateUser(requestBody *AuthRequestBody) error {
 }
 
 /*------------------- User Auth Code -------------------------------*/
-
-// DBcxn embodies the database connection
-type DBcxn struct {
-	Host      string
-	Name      string
-	Password  string
-	User      string
-	Port      int
-	UserTable string
-	FileTable string
-	cxn       *sql.Conn //unexported connection to database
-	context   *context.Context
-}
 
 // EstablishDbcxn will establish the connection to the database
 func (a *App) EstablishDbcxn(init bool) error {
@@ -182,7 +182,12 @@ func (a *App) EstablishDbcxn(init bool) error {
 
 	a.connection = &d
 	if init {
-		if err := a.createTableIfNotExists(); err != nil {
+		if err := a.createUserTableIfNotExists(); err != nil {
+			log.Error(err)
+			return err
+		}
+
+		if err := a.createFileTableIfNotExists(); err != nil {
 			log.Error(err)
 			return err
 		}

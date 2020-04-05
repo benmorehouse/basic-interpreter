@@ -15,6 +15,8 @@ type OperatingSystem struct {
 	CommandPipe      chan string
 	ResponsePipe     chan CommandResponse
 	DonePipe         chan bool // this is only to be called at server termination.
+	Connection       *DBcxn    // a pointer to the app's database connection
+	User             *Session
 }
 
 // InitOS is called when the server first starts.
@@ -36,6 +38,8 @@ func (a *App) InitOS() {
 		CommandPipe:      pipe,
 		DonePipe:         doneChan,
 		ResponsePipe:     responsePipe,
+		Connection:       a.connection,
+		User:             a.User,
 	}
 
 	os.createCommandMap()
@@ -219,7 +223,6 @@ type File struct {
 	Path    string
 	Basic   bool // if it is a basic file, otherwise shrug
 	content []string
-	Hash    []byte
 }
 
 // NewFile will return a File structure
@@ -237,6 +240,7 @@ func NewFile(name string) (*File, error) {
 }
 
 // AddFile will add a file to a given directory
+// and also add this file to the fileStore
 func (d *Directory) AddFile(newFileName string) error {
 
 	file, err := NewFile(newFileName)
@@ -245,6 +249,7 @@ func (d *Directory) AddFile(newFileName string) error {
 		return err
 	}
 
+	file.Path = d.ProvidePath()
 	d.SubFiles[file.Name] = file
 	return nil
 }
@@ -291,6 +296,67 @@ func (d *Directory) OpenFile(fileName string) (*File, error) {
 	log.Error(err)
 	return nil, err
 
+}
+
+// IsBasicFile will return whether or not the file is a basic
+// file based on the file name.
+func (f *File) CheckIfBasicFile() {
+	validate := func() bool {
+
+		if strings.TrimSpace(f.Name) == "" {
+			return false
+		}
+
+		possibleFiles := make(map[string]bool)
+		possibleFiles["bsc"] = true
+		possibleFiles["basic"] = true
+
+		fields := strings.SplitAfter(f.Name, ".")
+		if len(fields) < 2 {
+			return false
+		}
+
+		return possibleFiles[fields[0]]
+	}
+
+	f.Basic = validate()
+}
+
+// ReadFileFromFilestore will populate the contents of the file
+// from the byteslice given by the database instance.
+func (f *File) ReadFileFromFilestore(content []byte) {
+
+	if content == nil {
+		return
+	}
+
+	var fileContent []string
+	var buffer []byte
+
+	for _, digit := range content {
+		switch digit {
+		case '\n', '\r':
+			fileContent = append(fileContent, string(buffer))
+			buffer = nil
+		default:
+			buffer = append(buffer, digit)
+		}
+	}
+
+	f.content = fileContent
+}
+
+// WriteFileForSaving will write contents to a byte buffer
+func (f *File) WriteFileForSaving() []byte {
+
+	var buffer []byte
+	for _, row := range f.content {
+		for _, value := range row {
+			buffer = append(buffer, byte(value))
+		}
+		buffer = append(buffer, byte('\n'))
+	}
+	return buffer
 }
 
 // ########################################################################
@@ -451,6 +517,20 @@ func (cmd *touch) Process(input []string) *CommandResponse {
 		response.Success = false
 		return response
 	}
+
+	go func() {
+		//fileHash, err := ValidateFileName(cmd.nextFileName, cmd.os.CurrentDirectory.ProvidePath())
+		newFile, err := cmd.os.CurrentDirectory.OpenFile(cmd.nextFileName)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
+		if err := cmd.os.Connection.Save(newFile); err != nil {
+			log.Error(err)
+			return
+		}
+	}()
 
 	response.Success = true
 	return response

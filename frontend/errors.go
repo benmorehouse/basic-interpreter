@@ -187,6 +187,7 @@ const (
 	InvalidFileName       = iota
 	InvalidFilePath       = iota
 	FileTranslationFailed = iota
+	FileAlreadyExists     = iota
 )
 
 func NewFileStoreError(typeof int, err error) *FileStoreError {
@@ -204,6 +205,7 @@ func (fileStoreError FileStoreError) Error() string {
 		"Cannot have #, &, <space>, or : in the file name",
 		"The Filepath has been found to be nil",
 		"File translation failed",
+		"File already exists in the fielstore",
 	}
 
 	if fileStoreError.NestedErr != nil {
