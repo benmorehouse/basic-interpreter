@@ -1,0 +1,45 @@
+{
+	"Port":				2272,
+
+	"DBHost":			"localhost",
+	"DBName":			"basicinterpreter",
+	"DBUser":			"benmorehouse",
+	"DBPass":			"",
+	"DBPort":			5432,	
+	"UserTable":			"BasicUsers",
+	"FileTable":			"Filestore",
+
+	"AboutPageURL":			"/",
+	"LoginPageURL":			"/login",
+	"TerminalPageURL":		"/terminal",
+	"TextEditorPageURL":		"/textEditor",
+	"GithubPageURL":		"/github",
+	"CreateAccountURL":		"/createAccount",
+	"LoginAttemptedPageURL":	"/loginAttempted",
+
+	"AboutPageFile":		"pages/about.gohtml",
+	"LoginPageFile":		"pages/login.gohtml",
+	"TerminalPageFile":		"pages/terminal.gohtml",
+	"GithubPageFile":		"pages/github.gohtml",
+	"TextEditorFile":		"pages/textEditor.gohtml",
+
+	"TerminalInputFile":		"terminalInput.txt",
+	"TerminalOutputFile":		"terminalOutput.txt",
+
+	"RunTerminalEndpoint":		"/runTerminalEndpoint",
+	"RunTextEditorEndpoint":	"/runTextEditorEndpoint",
+
+	"CompileEndpoint":       	"/CompileBasic",
+	"SaveFileEndpoint":      	"/SaveFile",
+	"PathToBasicInterpreter":	"../interpreter/bin",
+	"PathToScripts":		"scripts/",
+	"PathToCSS":			"css/",
+	"PathToBackend":		"../interpreter/bin",
+	
+	"ScriptsPrefix":		"/scripts/",
+	"CSSPrefix":			"/css/",
+	"BasicInFile": 			"basic.txt",
+	"BasicOutFile": 		"output.txt",
+	"BasicBinary":			"basic"
+}
+
