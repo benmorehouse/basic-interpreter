@@ -6,9 +6,15 @@ I would strongly suggest you graze through these markdown files in the order tha
 
 
 [Abstract](main.md)
+
 [Interpreter](interpreter.md)
 
+---
+
 [front end](frontend.md)
+
 [server side](server.md)
+
 [authentication](authentication.md)
+
 [file storage](file_store.md)
